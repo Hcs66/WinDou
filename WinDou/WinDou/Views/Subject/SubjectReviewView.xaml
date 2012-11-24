@@ -1,0 +1,71 @@
+﻿<views:WinDouAppPage  
+    x:Class="WinDou.Views.SubjectReviewView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:WinDou.Views"
+    xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:localctl="clr-namespace:WinDou.Controls"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="0">
+            <TextBlock x:Name="ApplicationTitle" Text="WinDou-评论" Style="{StaticResource PhoneTextNormalStyle}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <ScrollViewer Grid.Row="1" Margin="12,0,12,0"
+                      Visibility="Collapsed" x:Name="contentContainer">
+            <StackPanel>
+                <Grid x:Name="ContentPanel" >
+                    <Grid.RowDefinitions>
+                        <RowDefinition  Height="Auto"/>
+                        <RowDefinition  Height="100"/>
+                        <RowDefinition  Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding Title}" Grid.Row="0" Style="{StaticResource PhoneTextTitle2Style}" 
+                           TextWrapping="Wrap" Width="430"/>
+                    <StackPanel Orientation="Horizontal" Grid.Row="1">
+                        <Image Source="{Binding Author.IconLink}" Margin="10,0,10,10" Width="48" Height="48"/>
+                        <StackPanel>
+                            <TextBlock Text="{Binding Author.AuthorName}"/>
+                            <TextBlock Text="{Binding Subject.Title}"/>
+                            <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                            <TextBlock Text="{Binding Updated}" Foreground="Gray"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <TextBlock x:Name="txtReviewContent" Grid.Row="2"  Text="{Binding RawSource}"  TextWrapping="Wrap" Width="445" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                </Grid>
+                <!--<Button Content="查看完整评论" x:Name="btnView" Click="btnView_Click"/>-->
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+    <!--Sample code showing usage of ApplicationBar-->
+    <views:WinDouAppPage.ApplicationBar>
+        <shell:ApplicationBar x:Name="appbar" IsVisible="False" IsMenuEnabled="True">
+            <shell:ApplicationBarIconButton IconUri="/Images/back.png" Text="上一页" x:Name="appbarBack" Click="appbarBack_Click"/>
+            <shell:ApplicationBarIconButton IconUri="/Images/next.png" Text="下一页" x:Name="appbarNext" Click="appbarNext_Click"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="返回首页" x:Name="appbarMenuHome" Click="appbarMenuHome_Click"/>
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </views:WinDouAppPage.ApplicationBar>
+
+</views:WinDouAppPage >

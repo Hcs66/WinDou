@@ -1,0 +1,203 @@
+﻿<views:WinDouAppPage 
+    x:Class="WinDou.Views.SubjectView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:WinDou.Views"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480"
+    shell:SystemTray.IsVisible="True">
+    <views:WinDouAppPage.Resources>
+        <DataTemplate x:Key="MovieTemplate">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                        <Image Source="{Binding SubjectImage}" Margin="10"/>
+                        <Grid Margin="10,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="导演:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="0" Grid.Column="0"/>
+                            <TextBlock Text="编剧:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="1" Grid.Column="0"/>
+                            <TextBlock Text="主演:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="2" Grid.Column="0"/>
+                            <TextBlock Text="类型:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="3" Grid.Column="0"/>
+                            <TextBlock Text="制片地区:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="4" Grid.Column="0"/>
+                            <TextBlock Text="语言:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="5" Grid.Column="0"/>
+                            <TextBlock Text="上映年份:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="6" Grid.Column="0"/>
+                            <TextBlock Text="时长:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="7" Grid.Column="0"/>
+
+                            <TextBlock Text="{Binding Directors}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="0" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Writers}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="1" Grid.Column="2"/>
+                            <TextBlock Text="{Binding Casts}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="2" Grid.Column="3"/>
+                            <TextBlock Text="{Binding MovieTypes}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="3" Grid.Column="4"/>
+                            <TextBlock Text="{Binding Country}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="4" Grid.Column="5"/>
+                            <TextBlock Text="{Binding Lanuages}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="5" Grid.Column="6"/>
+                            <TextBlock Text="{Binding Pubdate}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="6" Grid.Column="6"/>
+                            <TextBlock Text="{Binding MovieDuration}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="7" Grid.Column="7" />
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
+                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Text="剧情简介" Margin="0,10,0,0" />
+                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </DataTemplate>
+        <DataTemplate x:Key="MusicTemplate">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
+                        <Image Source="{Binding SubjectImage}" Margin="10"/>
+                        <Grid Margin="10,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="表演者:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="0" Grid.Column="0"/>
+                            <TextBlock Text="版本特性:"  Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="1" Grid.Column="0"/>
+                            <TextBlock Text="介质:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="2" Grid.Column="0"/>
+                            <TextBlock Text="发行时间:"  Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="3" Grid.Column="0"/>
+                            <TextBlock Text="出版者:"  Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="4" Grid.Column="0"/>
+                            <TextBlock Text="唱片数:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="5" Grid.Column="0"/>
+                            <TextBlock Text="条形码:"  Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="6" Grid.Column="0"/>
+
+                            <TextBlock Text="{Binding Singers}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="0" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Version}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="1" Grid.Column="2"/>
+                            <TextBlock Text="{Binding Media}"  Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="2" Grid.Column="3"/>
+                            <TextBlock Text="{Binding Pubdate}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="3" Grid.Column="4"/>
+                            <TextBlock Text="{Binding Publisher}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="4" Grid.Column="5"/>
+                            <TextBlock Text="{Binding Discs}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="5" Grid.Column="6"/>
+                            <TextBlock Text="{Binding EAN}"  Style="{StaticResource SubjectInfoTextBlackStyle}"  Grid.Row="6" Grid.Column="7" />
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
+                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Text="简介" Margin="0,10,0,0" />
+                        <TextBlock TextWrapping="Wrap" Width="430"  FontSize="{StaticResource PhoneFontSizeMedium}"  Text="{Binding Summary}"  Foreground="Black" />
+                        <TextBlock Text="曲目" Margin="0,10,0,0"/>
+                        <TextBlock TextWrapping="Wrap" Width="430"   FontSize="{StaticResource PhoneFontSizeMedium}" Text="{Binding Tracks}"  Foreground="Black" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </DataTemplate>
+        <DataTemplate x:Key="BookTemplate">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <StackPanel Orientation="Horizontal"  Margin="0,10,0,10">
+                        <Image Source="{Binding SubjectImage}" Margin="10"/>
+                        <Grid Margin="10,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="作者:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="0" Grid.Column="0"/>
+                            <TextBlock Text="出版社:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="1" Grid.Column="0"/>
+                            <TextBlock Text="出版年:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="2" Grid.Column="0"/>
+                            <TextBlock Text="页数:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="3" Grid.Column="0"/>
+                            <TextBlock Text="定价:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="4" Grid.Column="0"/>
+                            <TextBlock Text="装帧:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="5" Grid.Column="0"/>
+                            <TextBlock Text="ISBN:" Style="{StaticResource SubjectInfoTextGrayStyle}" Grid.Row="6" Grid.Column="0"/>
+
+                            <TextBlock Text="{Binding AuthorName}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="0" Grid.Column="1"/>
+                            <TextBlock Text="{Binding Publisher}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="1" Grid.Column="2"/>
+                            <TextBlock Text="{Binding Pubdate}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="2" Grid.Column="3"/>
+                            <TextBlock Text="{Binding Pages}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="3" Grid.Column="4"/>
+                            <TextBlock Text="{Binding Price}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="4" Grid.Column="5"/>
+                            <TextBlock Text="{Binding Binding}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="5" Grid.Column="6"/>
+                            <TextBlock Text="{Binding ISBN}" Style="{StaticResource SubjectInfoTextBlackStyle}" Grid.Row="6" Grid.Column="7" />
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
+                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    </StackPanel>
+                    <StackPanel Margin="0,10,0,0">
+                        <TextBlock Text="内容简介" Margin="0,10,0,0" />
+                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                        <TextBlock Text="作者简介" Margin="0,10,0,0"/>
+                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding AuthorIntro}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </DataTemplate>
+    </views:WinDouAppPage.Resources>
+    <!--LayoutRoot is the root grid where all page content is placed-->
+    <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contains the name of the application and page title-->
+        <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="0">
+            <TextBlock x:Name="ApplicationTitle" Text="WinDou-信息" Style="{StaticResource PhoneTextNormalStyle}"/>
+        </StackPanel>
+
+        <!--ContentPanel - place additional content here-->
+        <ContentControl x:Name="SubjectContent" Grid.Row="1" Margin="12,0,12,0"  
+                        VerticalContentAlignment="Top"  Visibility="Collapsed">
+        </ContentControl>
+    </Grid>
+
+
+    <!--Sample code showing usage of ApplicationBar-->
+    <views:WinDouAppPage.ApplicationBar>
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+            <!--<shell:ApplicationBarIconButton IconUri="/Images/appbar.add.png" Text="发表评论"/>-->
+            <shell:ApplicationBarIconButton IconUri="/Images/appbar.overflowdots.png" Text="查看评论" x:Name="appbarViewReview" Click="appbarViewReview_Click"/>
+            <shell:ApplicationBar.MenuItems>
+                <shell:ApplicationBarMenuItem Text="返回首页" x:Name="appbarMenuHome" Click="appbarMenuHome_Click"/>
+            </shell:ApplicationBar.MenuItems>
+        </shell:ApplicationBar>
+    </views:WinDouAppPage.ApplicationBar>
+
+</views:WinDouAppPage>
