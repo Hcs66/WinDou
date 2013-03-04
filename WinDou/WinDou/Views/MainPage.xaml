@@ -11,38 +11,41 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="False"
-     xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls">
+    xmlns:localctl="clr-namespace:WinDou.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+        xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls;assembly=Coding4Fun.Toolkit.Controls">
+
     <views:WinDouAppPage.Resources>
         <DataTemplate x:Key="SayingListTemplate">
-            <StackPanel Orientation="Horizontal" >
-                <Image Width="48" Height="48" Source="{Binding Author.IconLink}" Margin="10"/>
-                <StackPanel Margin="10">
-                    <TextBlock Text="{Binding Author.AuthorName}" />
-                    <TextBlock Text="{Binding Content}"  TextWrapping="Wrap" Foreground="Black" Width="345" FontSize="{StaticResource PhoneFontSizeMedium}"/>
-                    <TextBlock Text="{Binding Published}" Foreground="Gray" />
+            <StackPanel Margin="0,0,0,25">
+                <StackPanel Orientation="Horizontal" >
+                    <Image  Source="{Binding  User.SmallAvatar}" Style="{StaticResource AvatarStyle}" />
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock Text="{Binding User.ScreenName}" />
+                        <TextBlock Text="{Binding CreatedAt}" Foreground="Gray"  Margin="10,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
+                <TextBlock Margin="68,0,0,0" Text="{Binding Text}"  TextWrapping="Wrap" Foreground="Black"  FontSize="{StaticResource PhoneFontSizeMedium}"/>
             </StackPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="ReviewListTemplate">
-            <StackPanel Margin="10">
-                <TextBlock Text="{Binding Title}" FontSize="{StaticResource PhoneFontSizeMedium}" TextWrapping="Wrap" Width="400"/>
-                <TextBlock Text="{Binding Updated}" Foreground="Gray"  Margin="10,0,0,0"/>
-                <Image Source="{Binding Links[1].Href}" Margin="10" Width="101" Height="146"/>
+            <StackPanel Margin="0,10,0,10">
+                <TextBlock Text="{Binding Title}"  HorizontalAlignment="Left" Style="{StaticResource  TitleTextStyle}"/>
+                <TextBlock Text="{Binding Updated}" Foreground="Gray" />
+                <Image Source="{Binding Image}" Margin="10" Width="101" Height="146"/>
                 <Border>
-                    <TextBlock Text="{Binding Summary}"  TextWrapping="Wrap" Width="400" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    <TextBlock Text="{Binding Summary}"  TextWrapping="Wrap" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                 </Border>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <c4f:RoundButton ImageSource="/Images/appbar.overflowdots.png"  Content="完整评论" x:Name="linkBtnReview" CommandParameter="{Binding Id}" Click="linkBtnReview_Click"/>
-                    <c4f:RoundButton ImageSource="/Images/appbar.paper.png"  Content="查看条目" x:Name="linkBtnViewSubject" CommandParameter="{Binding Subject.Id}" Click="linkBtnViewSubject_Click"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                    <c4f:RoundButton ImageSource="/Images/appbar.overflowdots.png"   Label="完整评论" x:Name="linkBtnReview" CommandParameter="{Binding Id}" Click="linkBtnReview_Click"/>
+                    <c4f:RoundButton ImageSource="/Images/appbar.paper.png"  Label="查看条目" x:Name="linkBtnViewSubject" CommandParameter="{Binding SubjectId}" Click="linkBtnViewSubject_Click"/>
                 </StackPanel>
-                <Line StrokeDashArray="4"  Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="200" Y2="0" Margin="0,10,0,10" Stretch="Fill" />
+                <Line StrokeDashArray="4" Style="{StaticResource SplitLineStyle}"/>
             </StackPanel>
         </DataTemplate>
 
         <shell:ApplicationBar x:Name="appBarAuthenticate">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar.check.png" Text="确认" x:Name="appBarBtnConfirm" Click="appBarBtnConfirm_Click"/>
             <shell:ApplicationBarIconButton IconUri="/Images/appbar.refresh.png" Text="重新验证" x:Name="appBarBtnRetryAuthenticate" Click="appBarBtnRetryAuthenticate_Click"/>
         </shell:ApplicationBar>
 
@@ -58,27 +61,37 @@
 
         <shell:ApplicationBar x:Name="appBarDefault" Mode="Minimized" >
             <shell:ApplicationBarIconButton IconUri="/Images/appbar.refresh.png" Text="切换帐号" x:Name="appBarBtnRetryLogin" Click="appBarBtnRetryLogin_Click"/>
+            <shell:ApplicationBarIconButton IconUri="/Images/appbar.settings.png" Text="关于" x:Name="appBarBtnAbout" Click="appBarBtnAbout_Click"/>
         </shell:ApplicationBar>
 
+        <Style x:Key="TileStyle" TargetType="c4f:Tile">
+            <Setter Property="Width" Value="173"/>
+            <Setter Property="Height" Value="173"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Background" Value="#FF59AB65"/>
+            <Setter Property="toolkit:TiltEffect.IsTiltEnabled" Value="True"/>
+        </Style>
     </views:WinDouAppPage.Resources>
+
+
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
-        <phone:WebBrowser x:Name="webBrowser" Visibility="Collapsed" />
-        <phone:Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged">
+        <phone:WebBrowser x:Name="webBrowser" Visibility="Collapsed" IsScriptEnabled="True" />
+        <phone:Pivot x:Name="pivot" SelectionChanged="pivot_SelectionChanged" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
             <phone:Pivot.Title>
                 <TextBlock Text="WinDou"/>
             </phone:Pivot.Title>
-            <phone:PivotItem x:Name="pivotItem_profile" Header="首页" Margin="12,0">
+            <phone:PivotItem x:Name="pivotItem_profile" Header="首页" Style="{StaticResource PivotIemtDefaultStyle}">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0">
-                        <Image Width="48" Height="48" Source="{Binding CurrentPeople.IconLink}" Margin="10"/>
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" toolkit:TurnstileFeatherEffect.FeatheringIndex="1">
+                        <Image  Source="{Binding CurrentPeople.Avatar}" Style="{StaticResource AvatarStyle}"/>
                         <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Text="{Binding CurrentPeople.Title}" />
-                            <TextBlock Text="{Binding CurrentPeople.Content}"  TextWrapping="Wrap" Foreground="Black" Width="345" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                            <TextBlock Text="{Binding CurrentPeople.Name}" />
+                            <TextBlock Text="{Binding CurrentPeople.Desc}"  TextWrapping="Wrap" Foreground="Black" Width="345" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                         </StackPanel>
                     </StackPanel>
-                    <Grid>
+                    <Grid toolkit:TurnstileFeatherEffect.FeatheringIndex="2">
                         <Grid.RowDefinitions>
                             <RowDefinition/>
                             <RowDefinition/>
@@ -88,59 +101,68 @@
                             <ColumnDefinition/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <c4f:Tile Grid.Column="0" Grid.Row="0" x:Name="tileSearchSubject"  Title="搜索" Click="tileSearchSubject_Click" Width="173" Height="173" Margin="0,0,0,10" Background="#FF59AB65">
+                        <c4f:Tile Grid.Column="0" Grid.Row="0" x:Name="tileSearchSubject" Label="搜索"
+                                  Click="tileSearchSubject_Click" Style="{StaticResource TileStyle}" >
                             <StackPanel>
                                 <Image Source="/Images/find.png"/>
                             </StackPanel>
                         </c4f:Tile>
-                        <c4f:Tile Grid.Column="1" Grid.Row="0" x:Name="tileNewBooks" Title="最新书籍" Click="tileNewBooks_Click" Width="173" Height="173"  Margin="0,0,0,10" Background="#FF59AB65">
+                        <c4f:Tile Grid.Column="1" Grid.Row="0" x:Name="tileGroupSubject"  Label="我的小组"
+                                  Click="tileGroup_Click" Style="{StaticResource TileStyle}">
+                            <StackPanel>
+                                <Image Source="/Images/group.png"/>
+                            </StackPanel>
+                        </c4f:Tile>
+                        <c4f:Tile Grid.Column="0" Grid.Row="1" x:Name="tileNewBooks"  Click="tileNewBooks_Click"  Label="最新书籍"
+                                  Style="{StaticResource TileStyle}" >
                             <StackPanel>
                                 <Image Source="/Images/book.png"/>
                             </StackPanel>
                         </c4f:Tile>
-                        <c4f:Tile Grid.Column="0" Grid.Row="1" x:Name="tileNewMovies" Title="最新电影" Click="tileNewMovies_Click" Width="173" Height="173" Margin="0,0,0,10" Background="#FF59AB65">
+                        <c4f:Tile Grid.Column="0" Grid.Row="2" x:Name="tileNewMovies" Click="tileNewMovies_Click"  Label="最新电影"
+                                  Style="{StaticResource TileStyle}" >
                             <StackPanel>
                                 <Image Source="/Images/movie.png"/>
                             </StackPanel>
                         </c4f:Tile>
-                        <c4f:Tile Grid.Column="1" Grid.Row="1" x:Name="tileNewMusic" Title="最新音乐" Click="tileNewMusic_Click" Width="173" Height="173"  Margin="0,0,0,10" Background="#FF59AB65">
+                        <c4f:Tile Grid.Column="1" Grid.Row="1" x:Name="tileNewMusic" Click="tileNewMusic_Click"  Label="最新音乐"
+                                  Style="{StaticResource TileStyle}">
                             <StackPanel>
                                 <Image Source="/Images/music.png"/>
                             </StackPanel>
                         </c4f:Tile>
-                        <c4f:Tile Visibility="Collapsed" Grid.Column="1" Grid.Row="2" x:Name="tileSetting" Title="设置" Click="tileSetting_Click" Width="173" Height="173" Background="#FF59AB65">
+                        <c4f:Tile Grid.Column="1" Grid.Row="2" x:Name="tileAbout" Click="tileAbout_Click"  Label="说明"
+                                  Style="{StaticResource TileStyle}" Margin="0" >
                             <StackPanel>
-                                <Image Source="/Images/setting.png"/>
-                            </StackPanel>
-                        </c4f:Tile>
-                        <c4f:Tile Grid.Column="0" Grid.Row="2" x:Name="tileAbout" Title="关于" Click="tileAbout_Click" Width="173" Height="173" Background="#FF59AB65">
-                            <StackPanel>
-                                <Image Source="/Images/setting.png"/>
+                                <Image Source="/Images/about.png"/>
                             </StackPanel>
                         </c4f:Tile>
                     </Grid>
                 </StackPanel>
             </phone:PivotItem>
-            <phone:PivotItem x:Name="pivotItem_saying" Header="广播">
-                <phone:LongListSelector x:Name="listSaying" ItemsSource="{Binding SayingList}"
-                                          ItemTemplate="{StaticResource SayingListTemplate}"  Width="456"  Background="Transparent">
-                    <phone:LongListSelector.ListFooter>
-                        <Button Content="查看更多" x:Name="btnLoadMoreSaying" Click="btnLoadMoreSaying_Click"/>
-                    </phone:LongListSelector.ListFooter>
+            <phone:PivotItem x:Name="pivotItem_saying" Header="广播" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listSaying" ItemsSource="{Binding SayingList}"                         
+                                          ItemTemplate="{StaticResource SayingListTemplate}" >
+                    <localctl:ProgressLLS.ListFooter>
+                        <Button Content="查看更多" x:Name="btnLoadMoreSaying" Click="btnLoadMoreSaying_Click" Visibility="{Binding SayingLoadMoreVisibility}"/>
+                    </localctl:ProgressLLS.ListFooter>
 
-                </phone:LongListSelector>
+                </localctl:ProgressLLS>
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItem_bookReview" Header="最新书评">
-                <ListBox  x:Name="listBookReview" ItemsSource="{Binding BookReviewList}" ItemTemplate="{StaticResource ReviewListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItem_bookReview" Header="最新书评" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS  x:Name="listBookReview" ItemsSource="{Binding BookReviewList}"
+                                       ItemTemplate="{StaticResource ReviewListTemplate}"  />
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItem_movieReview" Header="最新影评">
-                <ListBox x:Name="listMovieReview" ItemsSource="{Binding MovieReviewList}" ItemTemplate="{StaticResource ReviewListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItem_movieReview" Header="最新影评" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listMovieReview" ItemsSource="{Binding MovieReviewList}" ItemTemplate="{StaticResource ReviewListTemplate}" 
+                          toolkit:TurnstileFeatherEffect.FeatheringIndex="1" />
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItem_musicReview" Header="最新乐评">
-                <ListBox x:Name="listMusicReview" ItemsSource="{Binding MusicReviewList}" ItemTemplate="{StaticResource ReviewListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItem_musicReview" Header="最新乐评" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listMusicReview" ItemsSource="{Binding MusicReviewList}" ItemTemplate="{StaticResource ReviewListTemplate}"
+                          toolkit:TurnstileFeatherEffect.FeatheringIndex="1" />
             </phone:PivotItem>
 
         </phone:Pivot>

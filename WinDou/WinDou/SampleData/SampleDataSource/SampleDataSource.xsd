@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+      *********    请勿修改此文件     *********
+      此文件由设计工具再生成。更改
+      此文件可能会导致错误。
+-->
+<xs:schema xmlns:blend="http://schemas.microsoft.com/expression/blend/2008" xmlns:tns="Expression.Blend.SampleData.SampleDataSource" targetNamespace="Expression.Blend.SampleData.SampleDataSource" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="SampleDataSource" type="tns:SampleDataSource" />
+  <xs:complexType name="SampleDataSource">
+    <xs:sequence>
+      <xs:element name="Collection" type="tns:ItemCollection" />
+      <xs:element name="AllTopicList" type="tns:AllTopicList" />
+      <xs:element name="GroupTopicReviewList" type="tns:GroupTopicReviewList" />
+      <xs:element name="CurrentTopic" type="tns:CurrentTopic" />
+      <xs:element name="ReviewList" type="tns:ReviewList" />
+    </xs:sequence>
+    <xs:attribute name="Property1" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ItemCollection">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="Item" type="tns:Item" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="Item">
+    <xs:attribute name="Property1" type="xs:string" />
+    <xs:attribute name="Property2" type="xs:boolean" />
+  </xs:complexType>
+  <xs:complexType name="AllTopicList">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="AllTopicListItem" type="tns:AllTopicListItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AllTopicListItem">
+    <xs:sequence>
+      <xs:element name="Group" type="tns:Group" />
+    </xs:sequence>
+    <xs:attribute name="Title" type="xs:string" />
+    <xs:attribute name="CommentsCount" type="xs:string" />
+    <xs:attribute name="Created" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="Group">
+    <xs:attribute name="Name" type="xs:string" />
+    <xs:attribute name="UId" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="GroupTopicReviewList">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="GroupTopicReviewListItem" type="tns:GroupTopicReviewListItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="GroupTopicReviewListItem">
+    <xs:sequence>
+      <xs:element name="Author" type="tns:Author" />
+    </xs:sequence>
+    <xs:attribute name="Time" type="xs:string" />
+    <xs:attribute name="Text" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="Author">
+    <xs:attribute name="Name" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="CurrentTopic">
+    <xs:attribute name="Title" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="ReviewList">
+    <xs:sequence>
+      <xs:element maxOccurs="unbounded" name="ReviewListItem" type="tns:ReviewListItem" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ReviewListItem">
+    <xs:sequence>
+      <xs:element name="Author" type="tns:Author1" />
+    </xs:sequence>
+    <xs:attribute name="Summary" type="xs:string" />
+    <xs:attribute name="Title" type="xs:string" />
+    <xs:attribute blend:Format="日期" name="Updated" type="xs:string" />
+  </xs:complexType>
+  <xs:complexType name="Author1">
+    <xs:attribute name="Name" type="xs:string" />
+  </xs:complexType>
+</xs:schema>

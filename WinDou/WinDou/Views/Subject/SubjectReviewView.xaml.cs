@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
 using Microsoft.Phone.Shell;
 
 namespace WinDou.Views
@@ -24,21 +24,23 @@ namespace WinDou.Views
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            if (NavigationContext.QueryString.ContainsKey("reviewId"))
+            base.OnNavigatedTo(e);
+            if (e.NavigationMode == System.Windows.Navigation.NavigationMode.New &&
+                NavigationContext.QueryString.ContainsKey("reviewId"))
             {
                 string reviewId = NavigationContext.QueryString["reviewId"];
                 if (!string.IsNullOrEmpty(reviewId))
                 {
+                    base.SetProgressIndicator(true);
                     App.SubjectReviewViewModel.GetReviewCompleted += new EventHandler<ViewModels.DoubanSearchCompletedEventArgs>(GetReviewCompleted);
                     App.SubjectReviewViewModel.GetReview(reviewId);
                 }
             }
-
-            base.OnNavigatedTo(e);
         }
 
         void GetReviewCompleted(object s, ViewModels.DoubanSearchCompletedEventArgs args)
         {
+            App.SubjectReviewViewModel.GetReviewCompleted -= GetReviewCompleted;
             Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
                 if (args.IsSuccess)
@@ -46,9 +48,19 @@ namespace WinDou.Views
                     contentContainer.Visibility = Visibility.Visible;
                     contentContainer.IsEnabled = false;
                     DataContext = args.Result;
-                    this.SetProgressIndicator(true);
-                    App.SubjectReviewViewModel.GetReviewContentCompleted += GetReviewContent_Completed;
-                    App.SubjectReviewViewModel.FetchReviewContent();
+                    this.SetProgressIndicator(false);
+                    contentContainer.IsEnabled = true;
+                    foreach (var content in App.SubjectReviewViewModel.ReveiwContentList)
+                    {
+                        TextBlock tb = new TextBlock();
+                        //tb.Width = 445;
+                        tb.TextWrapping = TextWrapping.Wrap;
+                        tb.Foreground = new SolidColorBrush(Colors.Black);
+                        tb.FontSize = (double)App.Current.Resources["PhoneFontSizeMedium"];
+                        tb.Text = content;
+                        spContent.Children.Add(tb);
+                    }
+                    contentContainer.ScrollToVerticalOffset(0);
                 }
                 else
                 {
@@ -56,57 +68,8 @@ namespace WinDou.Views
                     toast.Message = args.Message;
                     toast.Show();
                 }
-                //base.SetProgressIndicator(false);
             });
-            App.SubjectReviewViewModel.GetReviewCompleted -= GetReviewCompleted;
-        }
 
-        private void appbarBack_Click(object sender, EventArgs e)
-        {
-            PagingContent("back");
-        }
-
-        private void appbarNext_Click(object sender, EventArgs e)
-        {
-            PagingContent("next");
-        }
-
-        private void PagingContent(string type)
-        {
-            App.SubjectReviewViewModel.CurrentPageIndex = type == "back" ? App.SubjectReviewViewModel.CurrentPageIndex - 1 : App.SubjectReviewViewModel.CurrentPageIndex + 1;
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = App.SubjectReviewViewModel.CurrentPageIndex > 0;
-            ((ApplicationBarIconButton)ApplicationBar.Buttons[1]).IsEnabled = App.SubjectReviewViewModel.CurrentPageIndex + 1 < App.SubjectReviewViewModel.TotalPages;
-            txtReviewContent.Text = App.SubjectReviewViewModel.ReveiwContentList[App.SubjectReviewViewModel.CurrentPageIndex];
-            ApplicationTitle.Text = "WinDou-评论 " + (App.SubjectReviewViewModel.CurrentPageIndex + 1).ToString() + "/" + App.SubjectReviewViewModel.TotalPages.ToString();
-            contentContainer.ScrollToVerticalOffset(0);
-        }
-
-        private void btnView_Click(object sender, RoutedEventArgs e)
-        {
-            this.SetProgressIndicator(true);
-            contentContainer.IsEnabled = false;
-            App.SubjectReviewViewModel.GetReviewContentCompleted += GetReviewContent_Completed;
-            App.SubjectReviewViewModel.FetchReviewContent();
-        }
-
-        void GetReviewContent_Completed(object s, EventArgs e)
-        {
-            Deployment.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    this.SetProgressIndicator(false);
-                    contentContainer.IsEnabled = true;
-                    //btnView.Visibility = Visibility.Collapsed;
-                    App.SubjectReviewViewModel.GetReviewContentCompleted -= GetReviewContent_Completed;
-                    txtReviewContent.Text = App.SubjectReviewViewModel.ReveiwContentList[0];
-                    if (App.SubjectReviewViewModel.TotalPages > 1)
-                    {
-                        ApplicationBar.IsVisible = true;
-                        ApplicationTitle.Text = "WinDou-评论 " + (App.SubjectReviewViewModel.CurrentPageIndex + 1).ToString() + "/" + App.SubjectReviewViewModel.TotalPages.ToString();
-                        ((ApplicationBarIconButton)ApplicationBar.Buttons[0]).IsEnabled = false;
-                        ((ApplicationBarIconButton)ApplicationBar.Buttons[1]).IsEnabled = App.SubjectReviewViewModel.TotalPages > 1;
-                    }
-                        contentContainer.ScrollToVerticalOffset(0);
-                });
         }
 
         private void appbarMenuHome_Click(object sender, EventArgs e)

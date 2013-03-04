@@ -19,7 +19,7 @@ namespace WinDou.ViewModels
     public class SearchSubjectViewModel : ViewModelBase
     {
         private int rowPerPages = 10;
-        private int currentSearchPageIndex = 1;
+        private int currentSearchPageIndex = 0;
         public SearchSubjectViewModel()
         {
             SearchSubjectList = new ObservableCollection<BaseSubjectViewModel>();
@@ -34,7 +34,7 @@ namespace WinDou.ViewModels
                 case "SearchSubjectList":
                     if (SearchCompleted != null)
                     {
-                        SearchCompleted(null, new DoubanSearchCompletedEventArgs() {  IsSuccess=true});
+                        SearchCompleted(null, new DoubanSearchCompletedEventArgs() { IsSuccess = true });
                     }
                     break;
                 default:
@@ -87,7 +87,7 @@ namespace WinDou.ViewModels
             }
             else
             {
-                currentSearchPageIndex = 1;
+                currentSearchPageIndex = 0;
                 this.SearchSubjectList = new ObservableCollection<BaseSubjectViewModel>();
             }
             switch (SearchType)
@@ -96,26 +96,18 @@ namespace WinDou.ViewModels
                     App.DoubanService.SearchBooks(KeyWord, "", currentSearchPageIndex.ToString(), rowPerPages.ToString(),
                         (result, resp) =>
                         {
-                            List<BookViewModel> vmList = new List<BookViewModel>();
-                            if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
-                            {
-                                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            HandleResult(int.Parse(result.Total), resp,
+                                () =>
                                 {
-                                    foreach (var item in result.EntryList)
+                                    if (result.Books == null)
+                                    {
+                                        result.Books = new List<DoubanBook>();
+                                    }
+                                    foreach (var item in result.Books)
                                     {
                                         this.SearchSubjectList.Add(new BookViewModel(item));
                                     }
-                                    this.LoadMoreVisibility = this.SearchSubjectList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                    this.OnPropertyChanged("LoadMoreVisibility");
-                                    this.OnPropertyChanged("SearchSubjectList");
-                                    this.IsBusy = false;
                                 });
-                            }
-                            else if (SearchCompleted != null)
-                            {
-                                this.IsBusy = false;
-                                SearchCompleted(null, new DoubanSearchCompletedEventArgs() {  IsSuccess=false});
-                            }
                         }
                     );
                     break;
@@ -123,51 +115,37 @@ namespace WinDou.ViewModels
                     App.DoubanService.SearchMovies(KeyWord, "", currentSearchPageIndex.ToString(), rowPerPages.ToString(),
                         (result, resp) =>
                         {
-                            List<MovieViewModel> vmList = new List<MovieViewModel>();
-                            if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
-                            {
-                                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-                                {
-                                    foreach (var item in result.EntryList)
-                                    {
-                                        this.SearchSubjectList.Add(new MovieViewModel(item));
-                                    }
-                                    this.LoadMoreVisibility = this.SearchSubjectList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                    this.OnPropertyChanged("LoadMoreVisibility");
-                                    this.OnPropertyChanged("SearchSubjectList");
-                                    this.IsBusy = false;
-                                });
-                            }
-                            else if (SearchCompleted != null)
-                            {
-                                SearchCompleted(null, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
-                            }
+                            HandleResult(int.Parse(result.Total), resp,
+                             () =>
+                             {
+                                 if (result.Subjects == null)
+                                 {
+                                     result.Subjects = new List<DoubanMovie>();
+                                 }
+                                 foreach (var item in result.Subjects)
+                                 {
+                                     this.SearchSubjectList.Add(new MovieViewModel(item));
+                                 }
+                             });
                         }
                     );
                     break;
                 case 2://音乐搜索
-                    App.DoubanService.SearchMusic(KeyWord, "", currentSearchPageIndex.ToString(), rowPerPages.ToString(),
+                    App.DoubanService.SearchMusics(KeyWord, "", currentSearchPageIndex.ToString(), rowPerPages.ToString(),
                         (result, resp) =>
                         {
-                            List<MusicViewModel> vmList = new List<MusicViewModel>();
-                            if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
-                            {
-                                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            HandleResult(int.Parse(result.Total), resp,
+                                () =>
                                 {
-                                    foreach (var item in result.EntryList)
+                                    if (result.Musics == null)
+                                    {
+                                        result.Musics = new List<DoubanMusic>();
+                                    }
+                                    foreach (var item in result.Musics)
                                     {
                                         this.SearchSubjectList.Add(new MusicViewModel(item));
                                     }
-                                    this.LoadMoreVisibility = this.SearchSubjectList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                    this.OnPropertyChanged("LoadMoreVisibility");
-                                    this.OnPropertyChanged("SearchSubjectList");
-                                    this.IsBusy = false;
                                 });
-                            }
-                            else if (SearchCompleted != null)
-                            {
-                                SearchCompleted(null, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
-                            }
                         }
                     );
                     break;
@@ -176,6 +154,24 @@ namespace WinDou.ViewModels
             }
         }
 
+        private void HandleResult(int subjectTotalCount, DoubanResponse resp, Action action)
+        {
+            if (resp.RestResponse.StatusCode == HttpStatusCode.OK)
+            {
+                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    action();
+                    this.LoadMoreVisibility = this.SearchSubjectList.Count < subjectTotalCount ? Visibility.Visible : Visibility.Collapsed;
+                    this.OnPropertyChanged("LoadMoreVisibility");
+                    this.OnPropertyChanged("SearchSubjectList");
+                    this.IsBusy = false;
+                });
+            }
+            else if (SearchCompleted != null)
+            {
+                SearchCompleted(null, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
+            }
+        }
         #endregion
 
 

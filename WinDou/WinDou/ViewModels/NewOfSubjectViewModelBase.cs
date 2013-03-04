@@ -19,10 +19,10 @@ using HcsLib.WindowsPhone.Msic;
 
 namespace WinDou.ViewModels
 {
-    public abstract class NewOfSubjectViewModelBase : ViewModelBase
+    public abstract class NewOfSubjectViewModelBase<T> : ViewModelBase, INewOfSubjectViewModelBase where T : DoubanSubjectBase
     {
         #region 属性
-        public EventHandler LoadCompleted;
+        public EventHandler<DoubanSearchCompletedEventArgs> LoadCompleted;
         protected static Regex regexRemoveBlank = new Regex("[\\n\\s]+");
         protected static Regex regexSubjetId = new Regex("/([\\d]+)/?");
         protected string SubjectListUrl { get; set; }
@@ -43,7 +43,7 @@ namespace WinDou.ViewModels
                         NotifyOnPropertyChnged();
                         if (LoadCompleted != null)
                         {
-                            LoadCompleted(this, null);
+                            LoadCompleted(this, new DoubanSearchCompletedEventArgs() {  IsSuccess=true});
                         }
                     });
                     return;
@@ -53,29 +53,42 @@ namespace WinDou.ViewModels
             request.BeginGetResponse(
                 r =>
                 {
-                    var httpRequest = (HttpWebRequest)r.AsyncState;
-                    var httpResponse = (HttpWebResponse)httpRequest.EndGetResponse(r);
-                    if (httpResponse.StatusCode == HttpStatusCode.OK)
+                    try
                     {
-                        using (var reader = new StreamReader(httpResponse.GetResponseStream()))
+                        var httpRequest = (HttpWebRequest)r.AsyncState;
+                        var httpResponse = (HttpWebResponse)httpRequest.EndGetResponse(r);
+                        if (httpResponse.StatusCode == HttpStatusCode.OK)
                         {
-                            string content = reader.ReadToEnd();
-                            HtmlDocument doc = new HtmlDocument();
-                            doc.LoadHtml(content);
-                            //生成Subject列表
-                            BuildSubjectList(doc.DocumentNode);
-                            //缓存
-                            SaveCacheList();
-                            Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            using (var reader = new StreamReader(httpResponse.GetResponseStream()))
                             {
-                                //通知更新
-                                NotifyOnPropertyChnged();
-                                if (LoadCompleted != null)
+                                string content = reader.ReadToEnd();
+                                HtmlDocument doc = new HtmlDocument();
+                                doc.LoadHtml(content);
+                                //生成Subject列表
+                                BuildSubjectList(doc.DocumentNode);
+                                //缓存
+                                SaveCacheList();
+                                Deployment.Current.Dispatcher.BeginInvoke(() =>
                                 {
-                                    LoadCompleted(this, null);
-                                }
-                            });
+                                    //通知更新
+                                    NotifyOnPropertyChnged();
+                                    if (LoadCompleted != null)
+                                    {
+                                        LoadCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = true });
+                                    }
+                                });
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Deployment.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            if (LoadCompleted != null)
+                            {
+                                LoadCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = false, Message = ex.Message });
+                            }
+                        });
                     }
                 }, request);
         }
@@ -85,26 +98,36 @@ namespace WinDou.ViewModels
             LoadData(false);
         }
 
-        protected List<DoubanSubject> GetCacheList(string cacheFileName)
+        protected List<T> GetCacheList(string cacheFileName)
         {
-            List<DoubanSubject> cacheList = IsolatedStorageHelper.LoadFile<List<DoubanSubject>>(cacheFileName, true);
+            List<T> cacheList = IsolatedStorageHelper.LoadFile<List<T>>(cacheFileName);
             if (cacheList != null)
             {
                 return cacheList;
             }
-            return new List<DoubanSubject>();
+            return new List<T>();
         }
 
         //构建Subject列表
         protected abstract void BuildSubjectList(HtmlNode root);
         //将html转换为Subject
-        protected abstract List<DoubanSubject> ParseSubjecList(IEnumerable<HtmlAbstractor> liList);
+        protected abstract List<T> ParseSubjecList(IEnumerable<HtmlAbstractor> liList);
         //通知更新
         protected abstract void NotifyOnPropertyChnged();
         //加载缓存
         protected abstract bool LoadCacheList();
         //缓存列表
         protected abstract void SaveCacheList();
+
+        public void RegisteLoadCompleted(Action<object, DoubanSearchCompletedEventArgs> LoadCompleted)
+        {
+            this.LoadCompleted += new EventHandler<DoubanSearchCompletedEventArgs>(LoadCompleted);
+        }
+
+        public void UnRegisteLoadCompleted(Action<object, DoubanSearchCompletedEventArgs> LoadCompleted)
+        {
+            this.LoadCompleted -= new EventHandler<DoubanSearchCompletedEventArgs>(LoadCompleted);
+        }
         #endregion
 
     }

@@ -10,7 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
+using DoubanSharp.Model;
 
 namespace WinDou.Views
 {
@@ -21,6 +22,12 @@ namespace WinDou.Views
             InitializeComponent();
             DataContext=base.SubjectViewModel= App.NewOfMoviesViewModel;
             base.SubjectType = "1";
+            ProgressLLSList = new List<Controls.ProgressLLS>();
+            ProgressLLSList.Add(listAction);
+            ProgressLLSList.Add(listAll);
+            ProgressLLSList.Add(listComedy);
+            ProgressLLSList.Add(listPlot);
+            ProgressLLSList.Add(listSuspense);
         }
 
         protected void linkBtnViewSubject_Click(object sender, RoutedEventArgs e)

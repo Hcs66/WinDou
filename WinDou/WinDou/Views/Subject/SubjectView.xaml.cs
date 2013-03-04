@@ -10,6 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
 
 namespace WinDou.Views
 {
@@ -17,6 +18,7 @@ namespace WinDou.Views
     {
         private string m_SubjectId;
         private string m_SubjectType;
+
         public SubjectView()
         {
             InitializeComponent();
@@ -24,16 +26,24 @@ namespace WinDou.Views
 
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            if (NavigationContext.QueryString.ContainsKey("subjectId"))
+            base.OnNavigatedTo(e);
+            if (e.NavigationMode == System.Windows.Navigation.NavigationMode.Back
+                && !App.SubjectViewModel.HaveComments)
+            {
+                ToastPrompt toast = new ToastPrompt();
+                toast.Message = "没有相关评论";
+                toast.Show();
+            }
+            else if (e.NavigationMode == System.Windows.Navigation.NavigationMode.New
+                && NavigationContext.QueryString.ContainsKey("subjectId"))
             {
                 m_SubjectType = NavigationContext.QueryString["type"];
                 SetContentTemplate();
-                App.SubjectViewModel.GetSubjectCompleted += new EventHandler<ViewModels.DoubanSearchCompletedEventArgs>(SubjectViewModel_GetSubjectCompleted);
                 m_SubjectId = NavigationContext.QueryString["subjectId"];
+                base.SetProgressIndicator(true);
+                App.SubjectViewModel.GetSubjectCompleted += new EventHandler<ViewModels.DoubanSearchCompletedEventArgs>(SubjectViewModel_GetSubjectCompleted);
                 App.SubjectViewModel.GetSubject(m_SubjectId, m_SubjectType);
             }
-
-            base.OnNavigatedTo(e);
         }
 
         void SubjectViewModel_GetSubjectCompleted(object sender, ViewModels.DoubanSearchCompletedEventArgs e)

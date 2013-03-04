@@ -8,19 +8,18 @@ using Microsoft.Phone.Shell;
 using System.Windows.Navigation;
 using WinDou.Views;
 using System.Windows.Controls.Primitives;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
 using System.ComponentModel;
 using System.Threading;
 using HcsLib.WindowsPhone.Msic;
 using WinDou.ViewModels;
 using System.Net.NetworkInformation;
+using Microsoft.Phone.Controls;
 
 namespace WinDou
 {
     public partial class MainPage : WinDouAppPage
     {
-        protected OAuthRequestToken requestToken;
-
         public MainPage()
         {
             InitializeComponent();
@@ -29,10 +28,10 @@ namespace WinDou
 
             DataContext = App.MainViewModel;
 
-            webBrowser.Navigated += webBrowser_Navigated;
-
             BackKeyPress += OnBackKeyPressed;
         }
+
+
 
         #region 回调事件
 
@@ -43,27 +42,53 @@ namespace WinDou
 
             if (result == MessageBoxResult.OK)
             {
-                return;
+                App.Current.Terminate();
             }
             e.Cancel = true;
         }
 
-        void webBrowser_Navigated(object sender, NavigationEventArgs e)
+        void webBrowser_Navigating(object sender, NavigatingEventArgs e)
         {
-            webBrowser.Visibility = Visibility.Visible;
-            webBrowser.Navigated -= webBrowser_Navigated;
+            if (e.Uri.Host == "localhost")
+            {
+                webBrowser.Navigating -= webBrowser_Navigating;
+                webBrowser.Visibility = System.Windows.Visibility.Collapsed;
+                string query = e.Uri.PathAndQuery;
+                string code = query.Substring(query.IndexOf("=") + 1);
+                //获取accesstoken
+                App.DoubanService.Authenticate(code,
+                    (accessToken, resp) =>
+                    {
+                        if (resp.RestResponse.StatusCode == HttpStatusCode.OK)
+                        {
+                            App.DoubanService.AuthenticateWith(accessToken);
+                            //保存token
+                            IsolatedStorageHelper.SaveFile<OAuthAccessToken>(Globals.ACCESSTOKEN_FILENAME, accessToken);
+                            //验证后加载数据
+                            Deployment.Current.Dispatcher.BeginInvoke(()
+                                =>
+                            {
+                                pivot.Visibility = Visibility.Visible;
+                                ApplicationBar = this.Resources["appBarDefault"] as ApplicationBar;
+                                InitializeData();
+                            }
+                            );
+                        }
+                        else
+                        {
+                            Deployment.Current.Dispatcher.BeginInvoke(() =>
+                            {
+                                MessageBox.Show("授权失败，请重新授权", "提示", MessageBoxButton.OK);
+                            });
+                        }
+                    }
+                    );
+            }
         }
 
         void MainViewModel_LoadCurrentPeopleCompleted(object sender, EventArgs e)
         {
-            TogglePivotBusyStyle(true);
             App.MainViewModel.LoadCurrentPeopleCompleted -= MainViewModel_LoadCurrentPeopleCompleted;
-        }
-
-        void InitializeData_LoadSayingCompleted(object sender, EventArgs e)
-        {
-            TogglePivotBusyStyle(true);
-            App.MainViewModel.LoadSayingCompleted -= InitializeData_LoadSayingCompleted;
         }
 
         protected override void OnPageLoaded(object sender, RoutedEventArgs e)
@@ -98,6 +123,8 @@ namespace WinDou
         {
             if (e.PopUpResult == PopUpResult.Ok)
             {
+                this.SetProgressIndicator(true);
+                listSaying.IsBusy = true;
                 InputPrompt input = sender as InputPrompt;
                 App.MainViewModel.AddSayingCompleted += Saying_AddSayingCompleted;
                 App.MainViewModel.AddSaying(input.Value);
@@ -106,20 +133,24 @@ namespace WinDou
 
         void Saying_AddSayingCompleted(object sender, DoubanSearchCompletedEventArgs e)
         {
-            throw new Exception();
             App.MainViewModel.AddSayingCompleted -= Saying_AddSayingCompleted;
             Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
+                ToastPrompt toast = new ToastPrompt();
+                this.SetProgressIndicator(false);
+                listSaying.IsBusy = false;
                 if (!e.IsSuccess)
                 {
-                    ToastPrompt toast = new ToastPrompt();
                     toast.Message = e.Message;
                     toast.Show();
                 }
                 else
                 {
+                    toast.Message = "发表成功！";
+                    toast.Show();
                     appBarBtnRefreshSaying_Click(null, new EventArgs());
                 }
+
             });
         }
 
@@ -132,37 +163,32 @@ namespace WinDou
                 toast.Message = e.Message;
                 toast.Show();
             }
-            ToggleListBoxBusyStyle(listSaying, true);
+            listSaying.UpdateLayout();
+            ToggleListBoxBusyStyle(listSaying, false);
         }
 
         void MainViewModel_LoadMusicReviewCompleted(object sender, EventArgs e)
         {
             App.MainViewModel.LoadMusicReviewCompleted -= MainViewModel_LoadMusicReviewCompleted;
-            ToggleListBoxBusyStyle(listMusicReview, true);
+            ToggleListBoxBusyStyle(listMusicReview, false);
         }
 
         void MainViewModel_LoadMovieReviewCompleted(object sender, EventArgs e)
         {
             App.MainViewModel.LoadMovieReviewCompleted -= MainViewModel_LoadMovieReviewCompleted;
-            ToggleListBoxBusyStyle(listMovieReview, true);
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ToggleListBoxBusyStyle(listMovieReview, false);
+            });
         }
 
         void MainViewModel_LoadBookReviewCompleted(object sender, EventArgs e)
         {
             App.MainViewModel.LoadBookReviewCompleted -= MainViewModel_LoadBookReviewCompleted;
-            ToggleListBoxBusyStyle(listBookReview, true);
-        }
-
-        private void HandleGetRequestToken(OAuthRequestToken token, DoubanResponse response)
-        {
-            if (response.StatusCode == HttpStatusCode.OK)
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
             {
-                requestToken = token;
-                Deployment.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    webBrowser.Navigate(App.DoubanService.GetAuthorizationUri(token));
-                });
-            }
+                ToggleListBoxBusyStyle(listBookReview, false);
+            });
         }
 
         #endregion
@@ -181,38 +207,9 @@ namespace WinDou
             }
         }
 
-        private void appBarBtnConfirm_Click(object sender, EventArgs e)
-        {
-            ApplicationBar = this.Resources["appBarDefault"] as ApplicationBar;
-            App.DoubanService.GetAccessToken(requestToken, (accessToken, accessResp) =>
-            {
-                if (accessResp.StatusCode == HttpStatusCode.OK)
-                {
-                    App.DoubanService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret, accessToken.UserId);
-                    //保存token
-                    IsolatedStorageHelper.SaveFile<OAuthAccessToken>(Globals.ACCESSTOKEN_FILENAME, accessToken);
-                    //验证后加载数据
-                    Deployment.Current.Dispatcher.BeginInvoke(()
-                        =>
-                    {
-                        webBrowser.Visibility = Visibility.Collapsed;
-                        InitializeData();
-                    }
-                    );
-                }
-                else
-                {
-                    Deployment.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        MessageBox.Show("授权失败，请重新授权", "提示", MessageBoxButton.OK);
-                    });
-                }
-            });
-        }
-
         private void appBarBtnRetryAuthenticate_Click(object sender, EventArgs e)
         {
-            App.DoubanService.GetRequestToken(HandleGetRequestToken);
+            webBrowser.Navigate(App.DoubanService.GetAuthorizationUri());
         }
 
         private void appBarBtnAddSying_Click(object sender, EventArgs e)
@@ -231,7 +228,7 @@ namespace WinDou
             {
                 listSaying.ScrollTo(App.MainViewModel.SayingList[0]);
             }
-            ToggleListBoxBusyStyle(listSaying, false);
+            ToggleListBoxBusyStyle(listSaying, true);
             App.MainViewModel.LoadSayingCompleted += Saying_LoadSayingCompleted;
             App.MainViewModel.RefreshSayingData();
         }
@@ -246,17 +243,17 @@ namespace WinDou
             switch (pivot.SelectedIndex)
             {
                 case 2:
-                    ToggleListBoxBusyStyle(listBookReview, false);
+                    ToggleListBoxBusyStyle(listBookReview, true);
                     App.MainViewModel.LoadBookReviewCompleted += new EventHandler(MainViewModel_LoadBookReviewCompleted);
                     App.MainViewModel.LoadBookReviewData(true);
                     break;
                 case 3:
-                    ToggleListBoxBusyStyle(listMovieReview, false);
+                    ToggleListBoxBusyStyle(listMovieReview, true);
                     App.MainViewModel.LoadMovieReviewCompleted += new EventHandler(MainViewModel_LoadMovieReviewCompleted);
                     App.MainViewModel.LoadMovieReviewData(true);
                     break;
                 case 4:
-                    ToggleListBoxBusyStyle(listMusicReview, false);
+                    ToggleListBoxBusyStyle(listMusicReview, true);
                     App.MainViewModel.LoadMusicReviewCompleted += new EventHandler(MainViewModel_LoadMusicReviewCompleted);
                     App.MainViewModel.LoadMusicReviewData(true);
                     break;
@@ -267,15 +264,27 @@ namespace WinDou
 
         private void appBarBtnRetryLogin_Click(object sender, EventArgs e)
         {
-            //重置以保存的token
-            App.DoubanService.ResetAuthenticate();
-            IsolatedStorageHelper.SaveFile<OAuthAccessToken>(Globals.ACCESSTOKEN_FILENAME, new OAuthAccessToken());
-            pivot.Visibility = Visibility.Collapsed;
-            ApplicationBar = this.Resources["appBarAuthenticate"] as ApplicationBar;
-            ApplicationBar.IsVisible = true;
-            base.SetProgressIndicator(false);
-            webBrowser.Navigated += webBrowser_Navigated;
-            App.DoubanService.GetRequestToken(HandleGetRequestToken);
+            //年龄提示
+            if (MessageBox.Show("根据微软市场规定，绑定已有帐号或者注册新账号需要确认您的年龄大于13岁", "温馨提示", MessageBoxButton.OKCancel)
+                == MessageBoxResult.OK)
+            {
+                //重置保存的token
+                App.DoubanService.ResetAuthenticate();
+                //删除个人信息缓存
+                IsolatedStorageHelper.DeleteFile(Globals.ACCESSTOKEN_FILENAME);
+                IsolatedStorageHelper.DeleteFile(Globals.PEOPLE_FILENAME);
+                IsolatedStorageHelper.DeleteFile(Globals.SAYINGLIST_FILENAME);
+                App.MainViewModel.ClearUserData();
+                ApplicationBar = this.Resources["appBarAuthenticate"] as ApplicationBar;
+                HandleAuthenticate();
+            }
+        }
+
+        private void appBarBtnAbout_Click(object sender, EventArgs e)
+        {
+            AboutPrompt about = new AboutPrompt();
+            about.Background = new SolidColorBrush() { Color = Colors.Green };
+            about.Show("Hcs66", "", "690090@qq.com", "www.5jiang5zhi.com");
         }
 
         #endregion
@@ -308,23 +317,39 @@ namespace WinDou
 
         }
 
+        private void tileGroup_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/Views/Group/MyGroupView.xaml", UriKind.Relative));
+        }
+
         private void tileAbout_Click(object sender, RoutedEventArgs e)
         {
-            AboutPrompt about = new AboutPrompt();
-            about.Show("Hcs66", "", "690090@qq.com", "www.geekandlife.info");
+            MessagePrompt msgPrompt = new MessagePrompt() { Title = "说明" };
+            StackPanel aboutPanel = new StackPanel();
+            TextBlock text1 = new TextBlock() { Text = "1.非常感谢使用本应用" };
+            TextBlock text2 = new TextBlock() { Text = "2.由于豆瓣提供的API的限制，部分信息（如：评论详情）需要通过网页抓取", TextWrapping = TextWrapping.Wrap };
+            TextBlock text3 = new TextBlock() { Text = "3.由于豆瓣没有对外提供小组相关API，目前使用该类API前需通过网页登录一次", TextWrapping = TextWrapping.Wrap };
+            TextBlock text4 = new TextBlock() { Text = "4.有任何建议和意见欢迎随时反馈到690090@qq.com", TextWrapping = TextWrapping.Wrap };
+            TextBlock text5 = new TextBlock() { Text = "PS:由于豆瓣提供的API目前还不是很完善，所以如果遇到信息无法获取请重新尝试，我也会继续优化", TextWrapping = TextWrapping.Wrap };
+            aboutPanel.Children.Add(text1);
+            aboutPanel.Children.Add(text2);
+            aboutPanel.Children.Add(text3);
+            aboutPanel.Children.Add(text4);
+            aboutPanel.Children.Add(text5);
+            msgPrompt.Body = aboutPanel;
+            msgPrompt.Show();
         }
 
         #endregion
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-
-            base.SetProgressIndicator(false);
-            if (NetworkInterface.GetIsNetworkAvailable())//无网络时提示
+            base.OnNavigatedTo(e);
+            if (!NetworkInterface.GetIsNetworkAvailable())//无网络时提示
             {
-                if(MessageBox.Show("请确保可以访问网络", "提示信息", MessageBoxButton.OK)== MessageBoxResult.OK)
+                if (MessageBox.Show("请确保可以访问网络", "提示信息", MessageBoxButton.OK) == MessageBoxResult.OK)
                 {
-                    
+
                 };
             }
             else
@@ -332,11 +357,12 @@ namespace WinDou
                 //未授权进入授权处理
                 if (!App.DoubanService.HasAuthenticated)
                 {
-                    //TogglePivotBusyStyle(false);
-                    pivot.Visibility = Visibility.Collapsed;
-                    base.SetProgressIndicator(false);
-                    ApplicationBar.IsVisible = true;
-                    App.DoubanService.GetRequestToken(HandleGetRequestToken);
+                    //年龄提示
+                    if (MessageBox.Show("根据微软市场规定，绑定已有帐号或者注册新账号需要确认您的年龄大于13岁", "温馨提示", MessageBoxButton.OKCancel)
+                        == MessageBoxResult.OK)
+                    {
+                        HandleAuthenticate();
+                    }
                 }
                 else//已授权,数据初始化
                 {
@@ -349,28 +375,35 @@ namespace WinDou
                     }
                 }
             }
-            base.OnNavigatedTo(e);
+        }
+
+        private void HandleAuthenticate()
+        {
+            pivot.Visibility = Visibility.Collapsed;
+            ApplicationBar.IsVisible = true;
+            webBrowser.Visibility = System.Windows.Visibility.Visible;
+            webBrowser.Navigating += webBrowser_Navigating;
+            webBrowser.Navigate(App.DoubanService.GetAuthorizationUri());
         }
 
         void InitializeData()
         {
             App.MainViewModel.LoadCurrentPeopleCompleted += new EventHandler(MainViewModel_LoadCurrentPeopleCompleted);
             App.MainViewModel.LoadSayingCompleted += Saying_LoadSayingCompleted;
-            TogglePivotBusyStyle(false);
+            App.MainViewModel.LoadBookReviewCompleted += new EventHandler(MainViewModel_LoadBookReviewCompleted);
+            App.MainViewModel.LoadMovieReviewCompleted += new EventHandler(MainViewModel_LoadMovieReviewCompleted);
+            App.MainViewModel.LoadMusicReviewCompleted += new EventHandler(MainViewModel_LoadMusicReviewCompleted);
+            ToggleListBoxBusyStyle(listSaying, true);
+            ToggleListBoxBusyStyle(listBookReview, true);
+            ToggleListBoxBusyStyle(listMovieReview, true);
+            ToggleListBoxBusyStyle(listMusicReview, true);
             App.MainViewModel.LoadData();
-        }
-
-        private void ToggleListBoxBusyStyle(Control list, bool isEnabled)
-        {
-            list.IsEnabled = isEnabled;
-            base.SetProgressIndicator(!isEnabled);
         }
 
         private void TogglePivotBusyStyle(bool isVisible)
         {
             pivot.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             ApplicationBar.IsVisible = isVisible;
-            base.SetProgressIndicator(!isVisible);
         }
 
         private void linkBtnReview_Click(object sender, RoutedEventArgs e)
@@ -381,7 +414,7 @@ namespace WinDou
 
         private void btnLoadMoreSaying_Click(object sender, RoutedEventArgs e)
         {
-            ToggleListBoxBusyStyle(listSaying, false);
+            ToggleListBoxBusyStyle(listSaying, true);
             App.MainViewModel.LoadSayingCompleted += Saying_LoadSayingCompleted;
             App.MainViewModel.LoadMoreSayingData();
         }

@@ -18,10 +18,10 @@ namespace WinDou.ViewModels
     public class SubjectReviewListViewModel : ViewModelBase
     {
         private int m_RowPerPages = 10;
-        private int m_CurrentSearchPageIndex = 1;
+        private int m_CurrentSearchPageIndex = 0;
         public SubjectReviewListViewModel()
         {
-            ReviewList = new ObservableCollection<DoubanReview>();
+            ReviewList = new ObservableCollection<DoubanSubjectReview>();
             this.PropertyChanged += new PropertyChangedEventHandler(SubjectReviewListViewModel_PropertyChanged);
         }
 
@@ -33,7 +33,7 @@ namespace WinDou.ViewModels
                 case "ReviewList":
                     if (GetReviewsCompleted != null)
                     {
-                        GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() {  IsSuccess=true});
+                        GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = true });
                     }
                     break;
                 default:
@@ -45,7 +45,7 @@ namespace WinDou.ViewModels
 
         public string Title { get; set; }
 
-        public ObservableCollection<DoubanReview> ReviewList { get; set; }
+        public ObservableCollection<DoubanSubjectReview> ReviewList { get; set; }
 
         public EventHandler<DoubanSearchCompletedEventArgs> GetReviewsCompleted { get; set; }
 
@@ -69,92 +69,33 @@ namespace WinDou.ViewModels
             }
             else
             {
-                m_CurrentSearchPageIndex = 1;
-                ReviewList = new ObservableCollection<DoubanReview>();
+                m_CurrentSearchPageIndex = 0;
+                ReviewList = new ObservableCollection<DoubanSubjectReview>();
             }
-            switch (subjectType)
-            {
-                case "0":
-                    App.DoubanService.SearchBookReviews(subjectId, m_CurrentSearchPageIndex.ToString(), m_RowPerPages.ToString(), "",
-                        (result, resp) =>
-                        {
-                            if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
-                            {
-                                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-                                {
-                                    foreach (var item in result.EntryList)
-                                    {
-                                        this.ReviewList.Add(item);
-                                    }
-                                    this.Title = result.Title + "(" + result.TotalResults.ToString() + ")";
-                                    this.LoadMoreVisibility = this.ReviewList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                    this.OnPropertyChanged("LoadMoreVisibility");
-                                    this.OnPropertyChanged("Title");
-                                    this.OnPropertyChanged("ReviewList");
-                                    this.IsBusy = false;
-                                });
-                            }
-                            else if (GetReviewsCompleted != null)
-                            {
-                                GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
-                            }
-                        });
-                    break;
-                case "1":
-                    App.DoubanService.SearchMovieReviews(subjectId, m_CurrentSearchPageIndex.ToString(), m_RowPerPages.ToString(), "",
-                       (result, resp) =>
+            App.DoubanService.SearchSubjectReviews(subjectId, m_CurrentSearchPageIndex.ToString(), m_RowPerPages.ToString(),
+                   (result, resp) =>
+                   {
+                       if (resp.RestResponse.StatusCode == HttpStatusCode.OK && result.ReviewList.Count > 0)
                        {
-                           if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
+                           System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
                            {
-                               System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
+                               foreach (var item in result.ReviewList)
                                {
-                                   foreach (var item in result.EntryList)
-                                   {
-                                       this.ReviewList.Add(item);
-                                   }
-                                   this.Title = result.Title + "(" + result.TotalResults.ToString() + ")";
-                                   this.LoadMoreVisibility = this.ReviewList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                   this.OnPropertyChanged("LoadMoreVisibility");
-                                   this.OnPropertyChanged("Title");
-                                   this.OnPropertyChanged("ReviewList");
-                                   this.IsBusy = false;
-                               });
-                           }
-                           else if (GetReviewsCompleted != null)
-                           {
-                               GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() {  IsSuccess=false});
-                           }
-                       });
-                    break;
-                case "2":
-                    App.DoubanService.SearchMusicReviews(subjectId, m_CurrentSearchPageIndex.ToString(), m_RowPerPages.ToString(), "",
-                       (result, resp) =>
+                                   this.ReviewList.Add(item);
+                               }
+                               this.Title = result.ResultTitle + "(" + result.Total + ")";//result.Title + "(" + result.TotalResults.ToString() + ")";
+                               this.LoadMoreVisibility = Visibility.Collapsed;//this.ReviewList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
+                               this.OnPropertyChanged("LoadMoreVisibility");
+                               this.OnPropertyChanged("Title");
+                               this.OnPropertyChanged("ReviewList");
+                               this.IsBusy = false;
+                           });
+                       }
+                       else if (GetReviewsCompleted != null)
                        {
-                           if (resp.StatusCode == HttpStatusCode.OK && result.EntryList != null && result.EntryList.Count > 0)
-                           {
-                               System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() =>
-                               {
-                                   foreach (var item in result.EntryList)
-                                   {
-                                       this.ReviewList.Add(item);
-                                   }
-                                   this.Title = result.Title + "(" + result.TotalResults.ToString() + ")";
-                                   this.LoadMoreVisibility = this.ReviewList.Count < result.TotalResults ? Visibility.Visible : Visibility.Collapsed;
-                                   this.OnPropertyChanged("LoadMoreVisibility");
-                                   this.OnPropertyChanged("Title");
-                                   this.OnPropertyChanged("ReviewList");
-                                   this.IsBusy = false;
-                               });
-                           }
-                           else if (GetReviewsCompleted != null)
-                           {
-                               GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
-                           }
-                       });
-                    break;
-                default:
-                    break;
-            }
+                           GetReviewsCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = false });
+                       }
+                   });
 
         }
     }

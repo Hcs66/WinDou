@@ -12,6 +12,7 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System.Windows.Navigation;
 using System.Collections.Generic;
+using WinDou.Controls;
 
 namespace WinDou.Views
 {
@@ -23,26 +24,12 @@ namespace WinDou.Views
 
         public WinDouAppPage()
         {
-            Loaded += OnPageLoaded;
+           //Loaded += OnPageLoaded;
             InitialDataHandlers = new List<EventHandler<EventArgs>>();
-            // (Application.Current as App).InitialDataLoaded += WinDouAppPage_InitialDataLoaded;
-
-            if (!App.IsAppDataLoaded)
-            {
-                // Show "Loading..." in the system tray if either database were not initialized or data were not loaded
-                progressIndicator = new Microsoft.Phone.Shell.ProgressIndicator();
-                Microsoft.Phone.Shell.SystemTray.SetIsVisible(this, true);
-                Microsoft.Phone.Shell.SystemTray.SetProgressIndicator(this, progressIndicator);
-                progressIndicator.Text = "加载中";
-                progressIndicator.IsIndeterminate = true;
-                progressIndicator.IsVisible = true;
-            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            // If no initial data loading events have been registered (assuming they always take
-            // care to restore the state) then we should restore the state directly
             if (e.NavigationMode == NavigationMode.Back && InitialDataHandlers.Count == 0)
             {
                 //RestoreState(this, null);
@@ -66,7 +53,7 @@ namespace WinDou.Views
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
         {
              //(Application.Current as App).InitialDataLoaded -= WinDouAppPage_InitialDataLoaded;
-            Loaded -= OnPageLoaded;
+            //Loaded -= OnPageLoaded;
 
             //foreach (EventHandler<EventArgs> dataLoadedHandler in InitialDataHandlers)
             //{
@@ -95,7 +82,14 @@ namespace WinDou.Views
                 {
                     progressIndicator.IsVisible = isVisible;
                 }
-
+                else
+                {
+                    progressIndicator = new Microsoft.Phone.Shell.ProgressIndicator();
+                    Microsoft.Phone.Shell.SystemTray.SetProgressIndicator(this, progressIndicator);
+                    progressIndicator.Text = "处理中";
+                    progressIndicator.IsIndeterminate = true;
+                    progressIndicator.IsVisible = true;
+                }
                 SystemTray.SetIsVisible(this, isVisible);
             });
         }
@@ -126,6 +120,12 @@ namespace WinDou.Views
 
                 return false;
             }
+        }
+
+        protected void ToggleListBoxBusyStyle(ProgressLLS list, bool isBusy)
+        {
+            list.IsBusy = isBusy;
+            //this.SetProgressIndicator(isBusy);
         }
     }
 }

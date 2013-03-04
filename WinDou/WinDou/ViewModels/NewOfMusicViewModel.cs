@@ -20,13 +20,13 @@ using HcsLib.WindowsPhone.Msic;
 
 namespace WinDou.ViewModels
 {
-    public class NewOfMusicViewModel : NewOfSubjectViewModelBase
+    public class NewOfMusicViewModel : NewOfSubjectViewModelBase<DoubanMusic>
     {
 
         #region 属性
-        public List<DoubanSubject> ChinaList { get; set; }
-        public List<DoubanSubject> WesternList { get; set; }
-        public List<DoubanSubject> EasternList { get; set; }
+        public List<DoubanMusic> ChinaList { get; set; }
+        public List<DoubanMusic> WesternList { get; set; }
+        public List<DoubanMusic> EasternList { get; set; }
         #endregion
 
         public NewOfMusicViewModel()
@@ -41,9 +41,9 @@ namespace WinDou.ViewModels
             EasternList = ParseSubjecList(root.SelectNodes("//ul[@id='newcontent3']//li"));
         }
 
-        protected override List<DoubanSubject> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
+        protected override List<DoubanMusic> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
         {
-            List<DoubanSubject> subjectList = new List<DoubanSubject>();
+            List<DoubanMusic> subjectList = new List<DoubanMusic>();
             foreach (var li in liList)
             {
                 HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
@@ -52,28 +52,25 @@ namespace WinDou.ViewModels
                     continue;
                 }
                 //标题和链接
-                HtmlNode titleNode = fictionNodes.FindFirst("h3").LastChild;
+                HtmlNode h3=fictionNodes.FindFirst("h3");
+                HtmlNode titleNode = h3.LastChild;
                 //作者和简介
-                IEnumerable<HtmlNode> authorDescArr = fictionNodes.Elements("span");
-                StringBuilder authorDescString = new StringBuilder();
-                foreach (var item in authorDescArr)
+                HtmlNode authorNode = h3.NextSibling;
+                string author = "";
+                if (authorNode != null)
                 {
-                    authorDescString.Append(regexRemoveBlank.Replace(item.InnerText, ""));
-                    if (item.NextSibling.NodeType == HtmlNodeType.Text)
-                    {
-                        authorDescString.Append(regexRemoveBlank.Replace(item.NextSibling.InnerText, "")).Append("/");
-                    }
-
+                    author = authorNode.InnerText.Replace("\n", "").Replace(" ", "");
                 }
                 //图片
                 HtmlNode img = fictionNodes.FindFirst("img");
-                subjectList.Add(new DoubanSubject()
+                subjectList.Add(new DoubanMusic()
                 {
                     Id = regexSubjetId.Match(titleNode.Attributes["href"].Value).Groups[1].Value,
-                    Author = new DoubanAuthor() { AuthorName = authorDescString.ToString().TrimEnd('/') },
+                    AuthorName = author,
+                    Author = new List<DoubanAuthor>() { new DoubanAuthor() { Name = author } },
                     Summary = "",
                     Title = regexRemoveBlank.Replace(titleNode.InnerText, ""),
-                    Links = new List<DoubanLink>() { new DoubanLink() { Href = img.Attributes["src"].Value } }
+                    Image = img.Attributes["src"].Value
                 });
             }
             return subjectList;
@@ -96,8 +93,9 @@ namespace WinDou.ViewModels
 
         protected override void SaveCacheList()
         {
-            IsolatedStorageHelper.SaveFile<List<DoubanSubject>>(Globals.MUSIC_CHINALIST_FILENAME, ChinaList, true);
-            IsolatedStorageHelper.SaveFile<List<DoubanSubject>>(Globals.MUSIC_WESTERNLIST_FILENAME, WesternList, true);
-            IsolatedStorageHelper.SaveFile<List<DoubanSubject>>(Globals.MUSIC_EASTERNLIST_FILENAME, EasternList, true);        }
+            IsolatedStorageHelper.SaveFile<List<DoubanMusic>>(Globals.MUSIC_CHINALIST_FILENAME, ChinaList);
+            IsolatedStorageHelper.SaveFile<List<DoubanMusic>>(Globals.MUSIC_WESTERNLIST_FILENAME, WesternList);
+            IsolatedStorageHelper.SaveFile<List<DoubanMusic>>(Globals.MUSIC_EASTERNLIST_FILENAME, EasternList);
+        }
     }
 }

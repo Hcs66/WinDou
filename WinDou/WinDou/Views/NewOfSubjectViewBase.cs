@@ -8,26 +8,46 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
-using Coding4Fun.Phone.Controls;
+using DoubanSharp.Model;
 using WinDou.ViewModels;
+using Coding4Fun.Toolkit.Controls;
+using System.Collections.Generic;
+using WinDou.Controls;
 
 namespace WinDou.Views
 {
     public class NewOfSubjectViewBase : WinDouAppPage
     {
         protected string SubjectType { get; set; }
-        protected NewOfSubjectViewModelBase SubjectViewModel { get; set; }
+        protected INewOfSubjectViewModelBase SubjectViewModel { get; set; }
+        protected List<ProgressLLS> ProgressLLSList { get; set; }
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
-            SubjectViewModel.LoadCompleted += LoadCompleted;
-            SubjectViewModel.LoadData();
             base.OnNavigatedTo(e);
+            if (e.NavigationMode == System.Windows.Navigation.NavigationMode.New)
+            {
+                foreach (var list in ProgressLLSList)
+                {
+                    list.IsBusy = true;
+                }
+                SubjectViewModel.RegisteLoadCompleted(LoadCompleted);
+                SubjectViewModel.LoadData();
+            }
         }
 
-        protected void LoadCompleted(object s, EventArgs e)
+        protected void LoadCompleted(object s, DoubanSearchCompletedEventArgs e)
         {
-            base.SetProgressIndicator(false);
-            SubjectViewModel.LoadCompleted -= LoadCompleted;
+            foreach (var list in ProgressLLSList)
+            {
+                list.IsBusy = false;
+            }
+            SubjectViewModel.UnRegisteLoadCompleted(LoadCompleted);
+            if (!e.IsSuccess)
+            {
+                ToastPrompt toast = new ToastPrompt();
+                toast.Message = "加载信息出错，请重试";
+                toast.Show();
+            }
         }
 
         protected void ViewSubject(RoundButton button)
@@ -41,8 +61,11 @@ namespace WinDou.Views
 
         protected void RefreshList()
         {
-            base.SetProgressIndicator(true);
-            SubjectViewModel.LoadCompleted += LoadCompleted;
+            foreach (var list in ProgressLLSList)
+            {
+                list.IsBusy = true;
+            }
+            SubjectViewModel.RegisteLoadCompleted(LoadCompleted);
             SubjectViewModel.LoadData(true);
         }
 

@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Resources;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Navigation;
-using Microsoft.Phone.Controls;
-using Microsoft.Phone.Shell;
-using WinDou.ViewModels;
-using Microsoft.Practices.Mobile.Configuration;
-using DoubanSharp;
+using Coding4Fun.Toolkit.Controls;
 using DoubanSharp.Model;
-using Coding4Fun.Phone.Controls;
+using DoubanSharp.Service;
 using HcsLib.WindowsPhone.Configuration;
 using HcsLib.WindowsPhone.Msic;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
 using Microsoft.Phone.Tasks;
-using System.Windows.Controls;
+using Microsoft.Practices.Mobile.Configuration;
 using WinDou.Resources;
+using WinDou.ViewModels;
 
 namespace WinDou
 {
@@ -31,6 +30,9 @@ namespace WinDou
         private static NewOfBooksViewModel newOfBooksViewModel = null;
         private static NewOfMoviesViewModel newOfMoviesViewModel = null;
         private static NewOfMusicViewModel newOfMusicViewModel = null;
+        private static GroupViewModel groupViewModel = null;
+        private static MyGroupViewModel myGroupViewModel = null;
+        private static GroupTopicViewModel groupTopicViewModel = null;
 
         private static bool appInitialLoadPerformed = false;
         public static bool AppInitialized = false;
@@ -161,6 +163,51 @@ namespace WinDou
         }
 
         /// <summary>
+        /// 小组ViewModel
+        /// </summary>
+        public static GroupViewModel GroupViewModel
+        {
+            get
+            {
+                if (groupViewModel == null)
+                {
+                    groupViewModel = new GroupViewModel();
+                }
+                return groupViewModel;
+            }
+        }
+
+        /// <summary>
+        /// 我的小组ViewModel
+        /// </summary>
+        public static MyGroupViewModel MyGroupViewModel
+        {
+            get
+            {
+                if (myGroupViewModel == null)
+                {
+                    myGroupViewModel = new MyGroupViewModel();
+                }
+                return myGroupViewModel;
+            }
+        }
+
+        /// <summary>
+        /// 小组话题ViewModel
+        /// </summary>
+        public static GroupTopicViewModel GroupTopicViewModel
+        {
+            get
+            {
+                if (groupTopicViewModel == null)
+                {
+                    groupTopicViewModel = new GroupTopicViewModel();
+                }
+                return groupTopicViewModel;
+            }
+        }
+
+        /// <summary>
         /// 豆瓣服务类实体
         /// </summary>
         public static DoubanService DoubanService
@@ -171,7 +218,8 @@ namespace WinDou
                 {
                     string cosumerKey = ApplicationSettings.AppSettings["ConsumerKey"].Value;
                     string consumerSecret = ApplicationSettings.AppSettings["ConsumerSecret"].Value;
-                    doubanService = new DoubanService(cosumerKey, consumerSecret);
+                    string redirectUrl = ApplicationSettings.AppSettings["RedirectUrl"].Value;
+                    doubanService = new DoubanService(cosumerKey, consumerSecret, redirectUrl);
                 }
                 return doubanService;
             }
@@ -230,10 +278,10 @@ namespace WinDou
             if (Debugger.IsAttached)
             {
                 // 显示当前帧速率计数器。
-                Application.Current.Host.Settings.EnableFrameRateCounter = true;
+                //Application.Current.Host.Settings.EnableFrameRateCounter = true;
 
                 // 显示在每个帧中重绘的应用程序区域。
-                //Application.Current.Host.Settings.EnableRedrawRegions = true；
+                //Application.Current.Host.Settings.EnableRedrawRegions = true;
 
                 // 启用非生产分析可视化模式，
                 // 该模式显示递交给 GPU 的包含彩色重叠区的页面区域。
@@ -245,7 +293,7 @@ namespace WinDou
                 // 并且消耗电池电量。
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
-
+            SyncObject = new object();
         }
 
         // 应用程序启动(例如，从“开始”菜单启动)时执行的代码
@@ -257,9 +305,9 @@ namespace WinDou
             AppInitialized = false;
             //检测是否已授权
             OAuthAccessToken accessToken = IsolatedStorageHelper.LoadFile<OAuthAccessToken>(Globals.ACCESSTOKEN_FILENAME);//new OAuthAccessToken() { Token = "a1fb1863daf46b17e5f1492b90dd4145", TokenSecret = "76e18a2ba44fff88", UserId = "1351402" };
-            if (accessToken != null && !string.IsNullOrEmpty(accessToken.Token) && !string.IsNullOrEmpty(accessToken.TokenSecret))
+            if (accessToken != null && !string.IsNullOrEmpty(accessToken.AccessToken))
             {
-                DoubanService.AuthenticateWith(accessToken.Token, accessToken.TokenSecret, accessToken.UserId);
+                DoubanService.AuthenticateWith(accessToken);
             }
         }
 
@@ -310,12 +358,29 @@ namespace WinDou
             }
             //弹出错误信息
             MessagePrompt errorPrompt = new MessagePrompt();
+            errorPrompt.ActionPopUpButtons.Clear();
+            Button okButton = new Button();
+            okButton.Content = "返回";
+            okButton.Click+=(s,args)=>
+                {
+                    errorPrompt.OnCompleted(new PopUpEventArgs<string, PopUpResult>() { PopUpResult = PopUpResult.Cancelled });
+                };
+            errorPrompt.ActionPopUpButtons.Add(okButton);
             Button sendButton = new Button();
             sendButton.Content = "发送错误信息";
             sendButton.Click += (s, args) =>
             {
                 EmailComposeTask emailTask = new EmailComposeTask();
-                //EmailComposeTask 
+                string errorMsg = "";
+                if (e.ExceptionObject != null)
+                {
+                    errorMsg = "[Message]:" + e.ExceptionObject.Message + "\n\n\n[Source]:" + e.ExceptionObject.Source +
+                        "\n\n\n[StackTrace]:" + e.ExceptionObject.StackTrace;            
+                }
+                emailTask.Body = errorMsg;
+                emailTask.Subject = "WinDou应用错误报告";
+                emailTask.To = "690090@qq.com";
+                emailTask.Show();
             };
             errorPrompt.ActionPopUpButtons.Add(sendButton);
             errorPrompt.Message = "对不起，程序出错了，请重新尝试或重启应用";
@@ -337,7 +402,7 @@ namespace WinDou
 
             // 创建框架但先不将它设置为 RootVisual；这允许初始
             // 屏幕保持活动状态，直到准备呈现应用程序时。
-            RootFrame = new PhoneApplicationFrame();
+            RootFrame = new TransitionFrame();
             RootFrame.Navigated += CompleteInitializePhoneApplication;
 
             // 处理导航故障

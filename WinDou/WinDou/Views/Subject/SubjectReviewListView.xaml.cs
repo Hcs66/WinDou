@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
 using WinDou.ViewModels;
 
 namespace WinDou.Views.Subject
@@ -32,8 +32,8 @@ namespace WinDou.Views.Subject
             {
                 m_SubjectId = NavigationContext.QueryString["subjectId"];
                 m_SubjectType = NavigationContext.QueryString["subjectType"];
+                ToggleListBoxBusyStyle(listReview, true);
                 App.SubjectReviewListViewModel.GetReviewsCompleted += new EventHandler<ViewModels.DoubanSearchCompletedEventArgs>(GetReviewsCompleted);
-                base.SetProgressIndicator(true);
                 App.SubjectReviewListViewModel.GetReviews(m_SubjectId, m_SubjectType);
             }
         }
@@ -45,16 +45,15 @@ namespace WinDou.Views.Subject
             {
                 if (args.IsSuccess)
                 {
+                    App.SubjectViewModel.HaveComments = true;
                     listReview.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    ToastPrompt toast = new ToastPrompt();
-                    toast.Message = "没有相关评论";
-                    toast.Show();
+                    App.SubjectViewModel.HaveComments = false;
                     NavigationService.GoBack();
                 }
-                base.SetProgressIndicator(false);
+                ToggleListBoxBusyStyle(listReview, false);
             });
         }
 
@@ -62,8 +61,8 @@ namespace WinDou.Views.Subject
         {
             if (!App.SubjectReviewListViewModel.IsBusy)
             {
+                ToggleListBoxBusyStyle(listReview, true);
                 App.SubjectReviewListViewModel.GetReviewsCompleted += new EventHandler<ViewModels.DoubanSearchCompletedEventArgs>(GetReviewsCompleted);
-                base.SetProgressIndicator(true);
                 App.SubjectReviewListViewModel.GetReviews(m_SubjectId, m_SubjectType, true);
             }
         }

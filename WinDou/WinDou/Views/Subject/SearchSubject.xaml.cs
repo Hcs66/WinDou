@@ -10,8 +10,9 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
 using WinDou.ViewModels;
+using System.Windows.Navigation;
 
 namespace WinDou.Views
 {
@@ -37,6 +38,7 @@ namespace WinDou.Views
                 SetListItemTemplate();//设置模板
                 btnSearch.IsEnabled = false;
                 base.SetProgressIndicator(true);
+                ToggleListBoxBusyStyle(listSearchResult, true);
                 App.SearchSubjectViewModel.SearchCompleted += new EventHandler<DoubanSearchCompletedEventArgs>(SearchSubjectViewModel_SearchCompleted);
                 App.SearchSubjectViewModel.SearchSubject();
             }
@@ -64,12 +66,11 @@ namespace WinDou.Views
         protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if (NavigationContext.QueryString.ContainsKey("type"))
+            if (e.NavigationMode != NavigationMode.Back && NavigationContext.QueryString.ContainsKey("type"))
             {
                 int searchType = int.Parse(NavigationContext.QueryString["type"]);
                 App.SearchSubjectViewModel.SearchType = lpSearchType.SelectedIndex = searchType;
             }
-            base.SetProgressIndicator(false);
         }
 
         protected override void OnPageLoaded(object sender, RoutedEventArgs e)
@@ -83,7 +84,8 @@ namespace WinDou.Views
             App.SearchSubjectViewModel.SearchCompleted -= SearchSubjectViewModel_SearchCompleted;
             Deployment.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    btnSearch.IsEnabled=true;
+                    base.SetProgressIndicator(false);
+                    btnSearch.IsEnabled = true;
                 });
             if (e.IsSuccess)
             {
@@ -99,8 +101,7 @@ namespace WinDou.Views
                     toast.Show();
                 });
             }
-            base.SetProgressIndicator(false);
-
+            ToggleListBoxBusyStyle(listSearchResult, false);
         }
 
         private void btnView_Click(object sender, RoutedEventArgs e)
@@ -120,7 +121,7 @@ namespace WinDou.Views
             }
             if (!App.SearchSubjectViewModel.IsBusy)
             {
-                base.SetProgressIndicator(true);
+                ToggleListBoxBusyStyle(listSearchResult, true);
                 App.SearchSubjectViewModel.SearchCompleted += new EventHandler<DoubanSearchCompletedEventArgs>(SearchSubjectViewModel_SearchCompleted);
                 App.SearchSubjectViewModel.SearchSubject(true);
             }

@@ -7,14 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:WinDou.Views"
-    xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
+      xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls;assembly=Coding4Fun.Toolkit.Controls"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:localctl="clr-namespace:WinDou.Controls"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True">
+    d:DataContext="{Binding Source={StaticResource SampleDataSource}}">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
@@ -31,42 +32,38 @@
         <StackPanel Grid.Row="1" >
             <TextBlock TextWrapping="Wrap" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}"/>
         </StackPanel>
-        <phone:LongListSelector Grid.Row="2" Width="456" x:Name="listReview" 
-                                  ItemsSource="{Binding ReviewList}" Visibility="Collapsed"  Background="Transparent">
-            <phone:LongListSelector.ItemTemplate>
+        <localctl:ProgressLLS Grid.Row="2"  x:Name="listReview" Margin="10,0,0,0"
+                                  ItemsSource="{Binding ReviewList}"  Background="Transparent">
+            <localctl:ProgressLLS.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
                         <StackPanel Orientation="Horizontal">
-                            <Image Source="{Binding Author.IconLink}" Margin="10,0,10,10"/>
                             <StackPanel>
-                                <HyperlinkButton HorizontalContentAlignment="Left" Margin="-20,0,0,0" Width="400"  Content="{Binding Title}" HorizontalAlignment="Left"  
-                                                 x:Name="linkBtnReview" CommandParameter="{Binding Id}" Click="linkBtnReview_Click">
+                                <HyperlinkButton  Content="{Binding Title}" Width="450" Margin="-25,0,0,0" HorizontalContentAlignment="Left"
+                                                 x:Name="linkBtnReview" CommandParameter="{Binding Id}" Click="linkBtnReview_Click" Style="{StaticResource TitleHyperlinkButtonStyle}">
                                     <HyperlinkButton.ContentTemplate>
                                         <DataTemplate>
-                                            <TextBlock Text="{Binding}"  TextWrapping="Wrap" Width="400" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                                            <TextBlock Text="{Binding}" Style="{StaticResource  TitleTextStyle}"></TextBlock>
                                         </DataTemplate>
                                     </HyperlinkButton.ContentTemplate>
                                 </HyperlinkButton>
 
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Author.AuthorName}" Margin="0,0,20,0" Foreground="Gray"  FontSize="{StaticResource PhoneFontSizeMedium}"/>
-                                    <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                                    <TextBlock Text="{Binding Author.Name}" Margin="0,0,20,0" Foreground="Gray"  FontSize="{StaticResource PhoneFontSizeMedium}"/>
+									<TextBlock Text="{Binding Updated}" Margin="0,0,20,0" Foreground="Gray"  FontSize="{StaticResource PhoneFontSizeMedium}"/>
                                 </StackPanel>
-                                <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Summary}" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                                <TextBlock TextWrapping="Wrap" Width="450" Text="{Binding Summary}" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                             </StackPanel>
                         </StackPanel>
-                        <Line StrokeDashArray="4"  Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="200" Y2="0" Margin="0,10,0,10" Stretch="Fill" />
+                        <Line StrokeDashArray="4" Style="{StaticResource SplitLineStyle}"/>
                     </StackPanel>
                 </DataTemplate>
-            </phone:LongListSelector.ItemTemplate>
-            <phone:LongListSelector.ListFooter>
-                <Button Content="查看更多" x:Name="btnLoadMore"  Click="btnLoadMore_Click" Visibility="{Binding LoadMoreVisibility}"/>
-            </phone:LongListSelector.ListFooter>
-        </phone:LongListSelector>
+            </localctl:ProgressLLS.ItemTemplate>
+        </localctl:ProgressLLS>
     </Grid>
 
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Minimized">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="返回首页" x:Name="appbarMenuHome" Click="appbarMenuHome_Click"/>
             </shell:ApplicationBar.MenuItems>

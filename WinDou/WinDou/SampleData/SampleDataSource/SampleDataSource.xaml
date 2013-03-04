@@ -1,0 +1,108 @@
+﻿<!--
+      *********    请勿修改此文件     *********
+      此文件由设计工具再生成。更改
+      此文件可能会导致错误。
+-->
+<SampleData:SampleDataSource xmlns:SampleData="clr-namespace:Expression.Blend.SampleData.SampleDataSource" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Property1="Class curae cras duis">
+  <SampleData:SampleDataSource.Collection>
+    <SampleData:Item Property1="Aliquam integer cras class" Property2="True" />
+    <SampleData:Item Property1="Maecenas duis praesent" Property2="False" />
+    <SampleData:Item Property1="Nunc accumsan curae donec" Property2="True" />
+    <SampleData:Item Property1="Etiam quisque" Property2="False" />
+    <SampleData:Item Property1="Nam vivamus aenean fusce" Property2="True" />
+    <SampleData:Item Property1="Mauris sed dis" Property2="False" />
+    <SampleData:Item Property1="Nullam est bibendum amet" Property2="True" />
+    <SampleData:Item Property1="Lorem aliquam aliquet ante" Property2="False" />
+    <SampleData:Item Property1="Hac dictumst morbi nulla" Property2="True" />
+    <SampleData:Item Property1="Leo mus" Property2="False" />
+  </SampleData:SampleDataSource.Collection>
+  <SampleData:SampleDataSource.AllTopicList>
+    <SampleData:AllTopicListItem Title="终于申请到了！终于申请到了！终于申请到了！终于申请到了！终于申请到了！终于申请到了！" CommentsCount="18回应" Created="1天前">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Cras aliquam" UId="Aenean aliquam nam class" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Aenean curae" CommentsCount="Nam praesent duis integer" Created="Aptent nam class">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Duis maecenas nam class" UId="Curae mauris" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Integer nam quisque" CommentsCount="Nunc amet sed" Created="Duis sed maecenas auctor">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Aenean sed" UId="Donec cras" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Mauris sed dis" CommentsCount="Accumsan bibendum dis" Created="Praesent curae congue aliquam">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Nunc curae donec amet" UId="Duis integer sed" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Maecenas vivamus" CommentsCount="Ante dictumst" Created="Integer donec cursus dis">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Ante arcu" UId="Nullam aptent" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Aliquam nullam" CommentsCount="Est eleifend curae aenean" Created="Etiam dictum accumsan lectus">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Integer mauris diam" UId="Maecenas auctor nunc dis" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Aliquet blandit commodo cras" CommentsCount="Hac leo donec" Created="Fusce est nunc">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Dis quisque nullam" UId="Est praesent" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Conubia donec etiam aptent" CommentsCount="Arcu diam" Created="Amet bibendum quisque dictumst">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Eget vivamus" UId="Accumsan quisque vivamus etiam" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Cubilia est" CommentsCount="Mus quisque" Created="Ante libero arcu">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Etiam aliquam" UId="Amet ante fusce congue" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+    <SampleData:AllTopicListItem Title="Hac leo" CommentsCount="Vivamus mauris eget" Created="Eleifend ligula">
+      <SampleData:AllTopicListItem.Group>
+        <SampleData:Group Name="Fusce lorem est" UId="Hac lorem morbi" />
+      </SampleData:AllTopicListItem.Group>
+    </SampleData:AllTopicListItem>
+  </SampleData:SampleDataSource.AllTopicList>
+  <SampleData:SampleDataSource.GroupTopicReviewList>
+    <SampleData:GroupTopicReviewListItem Time="2013-02-02 16:07" Text="當是在國展的新東方上課，想不出來在哪里，所以沒去……\r\n">
+      <SampleData:GroupTopicReviewListItem.Author>
+        <SampleData:Author Name="Cras duis class aliquam" />
+      </SampleData:GroupTopicReviewListItem.Author>
+    </SampleData:GroupTopicReviewListItem>
+    <SampleData:GroupTopicReviewListItem Time="2013-02-02 16:07" Text="Praesent dis aliquam duis">
+      <SampleData:GroupTopicReviewListItem.Author>
+        <SampleData:Author Name="Nunc curae" />
+      </SampleData:GroupTopicReviewListItem.Author>
+    </SampleData:GroupTopicReviewListItem>
+    <SampleData:GroupTopicReviewListItem Time="2013-02-02 16:07" Text="Nunc accumsan integer quisque">
+      <SampleData:GroupTopicReviewListItem.Author>
+        <SampleData:Author Name="Integer quisque amet" />
+      </SampleData:GroupTopicReviewListItem.Author>
+    </SampleData:GroupTopicReviewListItem>
+  </SampleData:SampleDataSource.GroupTopicReviewList>
+  <SampleData:SampleDataSource.CurrentTopic>
+    <SampleData:CurrentTopic Title="Aliquam class curae cras" />
+  </SampleData:SampleDataSource.CurrentTopic>
+  <SampleData:SampleDataSource.ReviewList>
+    <SampleData:ReviewListItem Summary="百星酒店是一间位于千岛湖的五星级酒店，但酒店中的工作人员都只有四星酒店的工作经验。这些员工中有想当经理的副经理包定（郑中基 饰），觉得自己是明星胚子的餐饮主管兼酒保彭俊（杜汶泽 饰），对待工作严谨苛刻的客房部主管桃姐（吴君如 饰），一心要嫁有钱人的前台嘉美。收到会有神秘评级员前来对酒店进行评级的消息，担心被降到四星的集团把炒人不贬眼的经理古黛（毛舜均 饰）空降到了百星酒店，以促进服务。一个电影剧组来到酒店取景，剧组两大女主角凌梦露（吴千语 饰）和柯夏萍（熊黛林 饰）入住酒店，提出各种无理要求令员工们疲于奔命。与此同时，富商的千金宝宝（薛凯琪 饰）为了顺利继承遗产，决定在百星酒店举办一次假婚礼。包定找来新上任的英俊的保安主任雷劲（于波 饰）假扮新郎，而宝宝的舅舅志强（黄百鸣 饰）企图阻止婚礼、夺走遗产" Title="Maecenas praesent aenasdasdasdasdasdasdasdasdasdasdasdasdasdasdean crasdsdasdasdasd" Updated="November 5, 2003">
+      <SampleData:ReviewListItem.Author>
+        <SampleData:Author1 Name="Maecenas cras" />
+      </SampleData:ReviewListItem.Author>
+    </SampleData:ReviewListItem>
+    <SampleData:ReviewListItem Summary="Curae maecenas" Title="Duis accumsan" Updated="December 29, 2006">
+      <SampleData:ReviewListItem.Author>
+        <SampleData:Author1 Name="Praesent accumsan" />
+      </SampleData:ReviewListItem.Author>
+    </SampleData:ReviewListItem>
+    <SampleData:ReviewListItem Summary="Praesent integer" Title="Class mauris" Updated="January 19, 2004">
+      <SampleData:ReviewListItem.Author>
+        <SampleData:Author1 Name="Duis aliquam bibendum" />
+      </SampleData:ReviewListItem.Author>
+    </SampleData:ReviewListItem>
+  </SampleData:SampleDataSource.ReviewList>
+</SampleData:SampleDataSource>

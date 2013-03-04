@@ -19,11 +19,11 @@ using HcsLib.WindowsPhone.Msic;
 
 namespace WinDou.ViewModels
 {
-    public class NewOfBooksViewModel : NewOfSubjectViewModelBase
+    public class NewOfBooksViewModel : NewOfSubjectViewModelBase<DoubanBook>
     {
         #region 属性
-        public List<DoubanSubject> FictionList { get; set; }
-        public List<DoubanSubject> LiteratureList { get; set; }
+        public List<DoubanBook> FictionList { get; set; }
+        public List<DoubanBook> LiteratureList { get; set; }
         #endregion
 
         #region 方法
@@ -39,9 +39,9 @@ namespace WinDou.ViewModels
             LiteratureList = ParseSubjecList(root.SelectNodes("//div[@class='aside']//ul//li"));
         }
 
-        protected override List<DoubanSubject> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
+        protected override List<DoubanBook> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
         {
-            List<DoubanSubject> subjectList = new List<DoubanSubject>();
+            List<DoubanBook> subjectList = new List<DoubanBook>();
             foreach (var li in liList)
             {
                 HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
@@ -64,13 +64,14 @@ namespace WinDou.ViewModels
                 HtmlNode a = fictionNodes.FindFirst("a");
                 //图片
                 HtmlNode img = fictionNodes.FindFirst("img");
-                subjectList.Add(new DoubanSubject()
+                subjectList.Add(new DoubanBook()
                 {
                     Id = regexSubjetId.Match(a.Attributes["href"].Value).Groups[1].Value,
-                    Author = new DoubanAuthor() { AuthorName = authorDescArr[0] },
+                    AuthorName = authorDescArr[0],
+                    Author = new List<string>() { authorDescArr[0] },
                     Summary = authorDescArr[1],
                     Title = regexRemoveBlank.Replace(h2.InnerText, ""),
-                    Links = new List<DoubanLink>() { new DoubanLink() { Href = img.Attributes["src"].Value } }
+                    Image = img.Attributes["src"].Value
                 });
             }
             return subjectList;
@@ -91,8 +92,8 @@ namespace WinDou.ViewModels
 
         protected override void SaveCacheList()
         {
-            IsolatedStorageHelper.SaveFile<List<DoubanSubject>>(Globals.BOOK_FICTIONLIST_FILENAME, FictionList, true);
-            IsolatedStorageHelper.SaveFile<List<DoubanSubject>>(Globals.BOOK_LITERATURELIST_FILENAME, LiteratureList, true);
+            IsolatedStorageHelper.SaveFile<List<DoubanBook>>(Globals.BOOK_FICTIONLIST_FILENAME, FictionList);
+            IsolatedStorageHelper.SaveFile<List<DoubanBook>>(Globals.BOOK_LITERATURELIST_FILENAME, LiteratureList);
         }
 
         #endregion

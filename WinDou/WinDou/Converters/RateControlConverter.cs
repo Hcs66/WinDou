@@ -21,9 +21,8 @@ namespace WinDou.Converters
             {
                 return 0;
             }
-            var rate = ((DoubanSharp.Model.DoubanRating)value).Average;
-            var width = Double.Parse(parameter.ToString());
-            return (1-rate / 10) * width;
+            var rate = Double.Parse(value.ToString());
+            return rate / 2;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

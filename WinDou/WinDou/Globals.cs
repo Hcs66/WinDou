@@ -30,5 +30,6 @@ namespace WinDou
         public const string MUSIC_CHINALIST_FILENAME = "WinDou_Music_ChinaList.xml";
         public const string MUSIC_WESTERNLIST_FILENAME = "WinDou_Music_WesternList.xml";
         public const string MUSIC_EASTERNLIST_FILENAME = "WinDou_Music_EasternList.xml";
+        public const string PEOPLE_FILENAME = "WinDou_People.xml";
     }
 }

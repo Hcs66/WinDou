@@ -12,13 +12,13 @@
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
-    mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True">
+    mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480">
+
     <views:WinDouAppPage.Resources>
         <DataTemplate x:Key="MovieTemplate">
             <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                         <Image Source="{Binding SubjectImage}" Margin="10"/>
                         <Grid Margin="10,0,0,0">
@@ -57,12 +57,12 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
-                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  Style="{StaticResource RatingStyle}"/>
                         <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                     </StackPanel>
                     <StackPanel Margin="0,10,0,0">
                         <TextBlock Text="剧情简介" Margin="0,10,0,0" />
-                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                        <TextBlock TextWrapping="Wrap"   Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -70,7 +70,7 @@
         <DataTemplate x:Key="MusicTemplate">
             <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <TextBlock TextWrapping="Wrap"  Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
                     <StackPanel Orientation="Horizontal" Margin="0,10,0,10">
                         <Image Source="{Binding SubjectImage}" Margin="10"/>
                         <Grid Margin="10,0,0,0">
@@ -106,14 +106,14 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
-                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  Style="{StaticResource RatingStyle}"/>
                         <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                     </StackPanel>
                     <StackPanel Margin="0,10,0,0">
                         <TextBlock Text="简介" Margin="0,10,0,0" />
-                        <TextBlock TextWrapping="Wrap" Width="430"  FontSize="{StaticResource PhoneFontSizeMedium}"  Text="{Binding Summary}"  Foreground="Black" />
+                        <TextBlock TextWrapping="Wrap"   FontSize="{StaticResource PhoneFontSizeMedium}"  Text="{Binding Summary}"  Foreground="Black" />
                         <TextBlock Text="曲目" Margin="0,10,0,0"/>
-                        <TextBlock TextWrapping="Wrap" Width="430"   FontSize="{StaticResource PhoneFontSizeMedium}" Text="{Binding Tracks}"  Foreground="Black" />
+                        <TextBlock TextWrapping="Wrap"    FontSize="{StaticResource PhoneFontSizeMedium}" Text="{Binding Tracks}"  Foreground="Black" />
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -121,7 +121,7 @@
         <DataTemplate x:Key="BookTemplate">
             <ScrollViewer VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top">
                 <StackPanel>
-                    <TextBlock TextWrapping="Wrap" Width="400" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Title}" Style="{StaticResource PhoneTextTitle2Style}" />
                     <StackPanel Orientation="Horizontal"  Margin="0,10,0,10">
                         <Image Source="{Binding SubjectImage}" Margin="10"/>
                         <Grid Margin="10,0,0,0">
@@ -157,14 +157,14 @@
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" >
                         <TextBlock Text="评分："  FontSize="{StaticResource PhoneFontSizeMedium}" />
-                        <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                        <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  Style="{StaticResource RatingStyle}"/>
                         <TextBlock  Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                     </StackPanel>
                     <StackPanel Margin="0,10,0,0">
                         <TextBlock Text="内容简介" Margin="0,10,0,0" />
-                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                        <TextBlock TextWrapping="Wrap"  Text="{Binding Summary}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                         <TextBlock Text="作者简介" Margin="0,10,0,0"/>
-                        <TextBlock TextWrapping="Wrap" Width="430"  Text="{Binding AuthorIntro}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                        <TextBlock TextWrapping="Wrap"  Text="{Binding AuthorIntro}"  Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -183,7 +183,7 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <ContentControl x:Name="SubjectContent" Grid.Row="1" Margin="12,0,12,0"  
+        <ContentControl x:Name="SubjectContent" Grid.Row="1" Margin="12,0,12,0" 
                         VerticalContentAlignment="Top"  Visibility="Collapsed">
         </ContentControl>
     </Grid>

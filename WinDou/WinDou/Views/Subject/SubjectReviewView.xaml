@@ -7,15 +7,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:WinDou.Views"
-    xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
+       xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls;assembly=Coding4Fun.Toolkit.Controls"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:localctl="clr-namespace:WinDou.Controls"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
-    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True">
+    mc:Ignorable="d" d:DesignHeight="768" d:DesignWidth="480">
 
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
@@ -30,8 +29,7 @@
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <ScrollViewer Grid.Row="1" Margin="12,0,12,0"
-                      Visibility="Collapsed" x:Name="contentContainer">
+        <ScrollViewer Grid.Row="1" Margin="12,0,12,0" x:Name="contentContainer" Visibility="Collapsed" >
             <StackPanel>
                 <Grid x:Name="ContentPanel" >
                     <Grid.RowDefinitions>
@@ -40,28 +38,27 @@
                         <RowDefinition  Height="*"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="{Binding Title}" Grid.Row="0" Style="{StaticResource PhoneTextTitle2Style}" 
-                           TextWrapping="Wrap" Width="430"/>
-                    <StackPanel Orientation="Horizontal" Grid.Row="1">
-                        <Image Source="{Binding Author.IconLink}" Margin="10,0,10,10" Width="48" Height="48"/>
-                        <StackPanel>
-                            <TextBlock Text="{Binding Author.AuthorName}"/>
-                            <TextBlock Text="{Binding Subject.Title}"/>
-                            <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                           TextWrapping="Wrap" />
+                    <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Left" >
+                        <Image Source="{Binding Author.Icon}" Style="{StaticResource AvatarStyle}"/>
+                        <StackPanel HorizontalAlignment="Left">
+                            <TextBlock Text="{Binding Author.Name}"/>
+                            <TextBlock Text="{Binding SubjectTitle}"/>
+                            <toolkit:Rating  Margin="0" Value="{Binding Rating.Average}"  Style="{StaticResource RatingStyle}" HorizontalAlignment="Left"/>
                             <TextBlock Text="{Binding Updated}" Foreground="Gray"/>
                         </StackPanel>
                     </StackPanel>
-                    <TextBlock x:Name="txtReviewContent" Grid.Row="2"  Text="{Binding RawSource}"  TextWrapping="Wrap" Width="445" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    <StackPanel Grid.Row="2" x:Name="spContent" >
+
+                    </StackPanel>
+                    <!--<RichTextBox x:Name="rtxContent" Grid.Row="2" Width="450" TextWrapping="Wrap" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>-->
                 </Grid>
-                <!--<Button Content="查看完整评论" x:Name="btnView" Click="btnView_Click"/>-->
             </StackPanel>
         </ScrollViewer>
     </Grid>
 
-    <!--Sample code showing usage of ApplicationBar-->
     <views:WinDouAppPage.ApplicationBar>
-        <shell:ApplicationBar x:Name="appbar" IsVisible="False" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/back.png" Text="上一页" x:Name="appbarBack" Click="appbarBack_Click"/>
-            <shell:ApplicationBarIconButton IconUri="/Images/next.png" Text="下一页" x:Name="appbarNext" Click="appbarNext_Click"/>
+        <shell:ApplicationBar x:Name="appbar" IsVisible="True" IsMenuEnabled="True" Mode="Minimized">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="返回首页" x:Name="appbarMenuHome" Click="appbarMenuHome_Click"/>
             </shell:ApplicationBar.MenuItems>

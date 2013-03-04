@@ -7,57 +7,63 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:views="clr-namespace:WinDou.Views"
-    xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls"
+       xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls;assembly=Coding4Fun.Toolkit.Controls"
+    xmlns:localctl="clr-namespace:WinDou.Controls"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="Portrait"  Orientation="Portrait"
-    shell:SystemTray.IsVisible="True">
+    SupportedOrientations="Portrait"  Orientation="Portrait">
 
     <views:NewOfSubjectViewBase.Resources>
         <DataTemplate x:Key="SubjectListTemplate">
             <StackPanel Margin="10">
-                <TextBlock Text="{Binding Title}" FontSize="{StaticResource PhoneFontSizeMedium}" TextWrapping="Wrap" Width="400"/>
-                <TextBlock Text="{Binding Author.AuthorName}" Foreground="Gray"  Margin="10,0,0,0" TextWrapping="Wrap" Width="400"/>
-                <Image Source="{Binding Links[0].Href}" Margin="10" Width="101" Height="146"/>
+                <TextBlock Text="{Binding Title}" Style="{StaticResource  TitleTextStyle}"/>
+                <TextBlock Text="{Binding AltTitle}" Foreground="Gray"  TextWrapping="Wrap" />
+                <Image Source="{Binding Image}" Margin="10" Width="101" Height="146"/>
                 <Border>
-                    <TextBlock Text="{Binding Summary}"  TextWrapping="Wrap" Width="400" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
+                    <TextBlock Text="{Binding Summary}"  TextWrapping="Wrap" Foreground="Black" FontSize="{StaticResource PhoneFontSizeMedium}"/>
                 </Border>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <c4f:RoundButton ImageSource="/Images/appbar.paper.png"  Content="查看条目" x:Name="linkBtnViewSubject" CommandParameter="{Binding Id}" Click="linkBtnViewSubject_Click"/>
+                    <c4f:RoundButton ImageSource="/Images/appbar.paper.png"  Label="查看条目" x:Name="linkBtnViewSubject" CommandParameter="{Binding Id}" Click="linkBtnViewSubject_Click"/>
                 </StackPanel>
-                <Line StrokeDashArray="4"  Stroke="Black" StrokeThickness="2" X1="0" Y1="0" X2="200" Y2="0" Margin="0,10,0,10" Stretch="Fill" />
+                <Line StrokeDashArray="4" Style="{StaticResource SplitLineStyle}"/>
             </StackPanel>
         </DataTemplate>
     </views:NewOfSubjectViewBase.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="{StaticResource ViewBackgroundBrush}">
         <!--Pivot Control-->
-        <phone:Pivot x:Name="pivotContainer">
+        <phone:Pivot x:Name="pivotContainer" toolkit:TurnstileFeatherEffect.FeatheringIndex="0">
             <phone:Pivot.Title>
                 <TextBlock Text="WinDou-最新电影"/>
             </phone:Pivot.Title>
             <!--Pivot item one-->
-            <phone:PivotItem x:Name="pivotItemAll" Header="全部">
-                <ListBox x:Name="listAll" ItemsSource="{Binding AllList}" ItemTemplate="{StaticResource SubjectListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItemAll" Header="全部" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listAll" ItemsSource="{Binding AllList}" 
+                         ItemTemplate="{StaticResource SubjectListTemplate}" toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
 
-            <!--Pivot item two-->
-            <phone:PivotItem x:Name="pivotItemAction" Header="动作">
-                <ListBox x:Name="listAction" ItemsSource="{Binding ActionList}" ItemTemplate="{StaticResource SubjectListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItemPlot" Header="剧情" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listPlot" ItemsSource="{Binding PlotList}" ItemTemplate="{StaticResource SubjectListTemplate}"
+                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItemPlot" Header="剧情">
-                <ListBox x:Name="listPlot" ItemsSource="{Binding PlotList}" ItemTemplate="{StaticResource SubjectListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItemAction" Header="动作" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listAction" ItemsSource="{Binding ActionList}" ItemTemplate="{StaticResource SubjectListTemplate}"
+                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItemComedy" Header="喜剧">
-                <ListBox x:Name="listComedy" ItemsSource="{Binding ComedyList}" ItemTemplate="{StaticResource SubjectListTemplate}"/>
+
+            <phone:PivotItem x:Name="pivotItemComedy" Header="喜剧" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listComedy" ItemsSource="{Binding ComedyList}" ItemTemplate="{StaticResource SubjectListTemplate}"
+                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
 
-            <phone:PivotItem x:Name="pivotItemSuspense" Header="悬疑">
-                <ListBox x:Name="listSuspense" ItemsSource="{Binding SuspenseList}" ItemTemplate="{StaticResource SubjectListTemplate}"/>
+            <phone:PivotItem x:Name="pivotItemSuspense" Header="悬疑" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listSuspense" ItemsSource="{Binding SuspenseList}" ItemTemplate="{StaticResource SubjectListTemplate}"
+                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
         </phone:Pivot>
     </Grid>

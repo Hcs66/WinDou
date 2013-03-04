@@ -13,19 +13,20 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d" d:DesignHeight="800" d:DesignWidth="480"
-    shell:SystemTray.IsVisible="True"
-    xmlns:c4f="clr-namespace:Coding4Fun.Phone.Controls;assembly=Coding4Fun.Phone.Controls">
+    xmlns:localctl="clr-namespace:WinDou.Controls"
+        xmlns:c4f="clr-namespace:Coding4Fun.Toolkit.Controls;assembly=Coding4Fun.Toolkit.Controls">
+
+
     <views:WinDouAppPage.Resources>
         <DataTemplate x:Key="BookListTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image  Source="{Binding SubjectImage}" Margin="10" Height="48" Width="48"/>
-                <StackPanel Margin="10" Width="275">
-                    <TextBlock Text="{Binding Title}" />
+                <Image  Source="{Binding SubjectImage}" Style="{StaticResource AvatarStyle}"/>
+                <StackPanel Margin="10" Width="275" HorizontalAlignment="Left">
+                    <TextBlock Text="{Binding Title}" Style="{StaticResource  TitleTextStyle}"/>
                     <TextBlock Text="{Binding Pubdate}"/>
                     <TextBlock Text="{Binding AuthorName}" Foreground="Black"/>
-                    <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
-                    <!--<TextBlock Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" 
-                               Style="{StaticResource PhoneTextContentStyle}"/>-->
+                    <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  
+                                    Style="{StaticResource RatingStyle}" HorizontalAlignment="Left" />
                 </StackPanel>
                 <c4f:RoundButton CommandParameter="{Binding SubjectId}"  x:Name="btnSearch" VerticalAlignment="Center"
                                  Click="btnView_Click" ImageSource="/Images/next.png"  HorizontalAlignment="Right"/>
@@ -33,14 +34,14 @@
         </DataTemplate>
         <DataTemplate x:Key="MovieListTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image  Source="{Binding SubjectImage}" Margin="10" Height="48" Width="48"/>
+                <Image  Source="{Binding SubjectImage}" Style="{StaticResource AvatarStyle}"/>
                 <StackPanel Margin="10" Width="275">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Title}"  Margin="0,0,10,0"/>
+                        <TextBlock Text="{Binding Title}"  Margin="0,0,10,0" Style="{StaticResource  TitleTextStyle}"/>
                         <TextBlock Text="{Binding Pubdate}"/>
                     </StackPanel>
                     <TextBlock Text="{Binding Casts}" Foreground="Black"/>
-                    <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                    <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  Style="{StaticResource RatingStyle}"/>
                     <!--<TextBlock Text="{Binding Rating.NumRaters,Converter={StaticResource NumRatersToStringCvt}}" 
                                Style="{StaticResource PhoneTextContentStyle}"/>-->
                 </StackPanel>
@@ -50,14 +51,14 @@
         </DataTemplate>
         <DataTemplate x:Key="MusicListTemplate">
             <StackPanel Orientation="Horizontal">
-                <Image  Source="{Binding SubjectImage}" Margin="10" Height="48" Width="48"/>
+                <Image  Source="{Binding SubjectImage}" Style="{StaticResource AvatarStyle}"/>
                 <StackPanel Margin="10" Width="275">
-                    <TextBlock Text="{Binding Title}" />
+                    <TextBlock Text="{Binding Title}"  Style="{StaticResource  TitleTextStyle}"/>
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{Binding Pubdate}"/>
                         <TextBlock Text="{Binding Signers}" Foreground="Black"/>
                     </StackPanel>
-                    <toolkit:Rating Value="{Binding Rating.Average}"  RatingItemCount="5"/>
+                    <toolkit:Rating Value="{Binding Rating.Average,Converter={StaticResource RateControlCvt}}"  Style="{StaticResource RatingStyle}"/>
                 </StackPanel>
                 <c4f:RoundButton CommandParameter="{Binding SubjectId}"  x:Name="btnSearch" VerticalAlignment="Center"
                                  Click="btnView_Click" ImageSource="/Images/next.png"  HorizontalAlignment="Right"/>
@@ -79,11 +80,15 @@
         <!--ContentPanel - place additional content here-->
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="50"/>
                 <RowDefinition Height="75"/>
+                <RowDefinition Height="50"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <ListBox Grid.Row="0"  x:Name="lpSearchType" FontSize="24"  SelectedIndex="{Binding SearchType,Mode=TwoWay}" Margin="10,0,5,0" Background="Transparent" Canvas.ZIndex="1" Height="30">
+            <StackPanel Grid.Row="0"   Orientation="Horizontal" Height="75" VerticalAlignment="Top">
+                <TextBox x:Name="txtKeyWord"  Width="385" Margin="0" Text="{Binding KeyWord,Mode=TwoWay}" VerticalAlignment="Top"/>
+                <c4f:RoundButton  x:Name="btnSearch" Click="btnSearch_Click" ImageSource="/Images/appbar.search.png" VerticalAlignment="Top" Margin="0,10,0,0" HorizontalAlignment="Left"/>
+            </StackPanel>
+            <ListBox Grid.Row="1"  x:Name="lpSearchType" FontSize="36"  SelectedIndex="{Binding SearchType,Mode=TwoWay}" Margin="10,0,5,0" Background="Transparent" Canvas.ZIndex="1" Height="50">
                 <ListBoxItem  Content="图书" Margin="0,0,10,0"/>
                 <ListBoxItem  Content="电影" Margin="0,0,10,0"/>
                 <ListBoxItem  Content="音乐"/>
@@ -93,22 +98,18 @@
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
             </ListBox>
-            <StackPanel Grid.Row="1"   Orientation="Horizontal" Height="75" VerticalAlignment="Top">
-                <TextBox x:Name="txtKeyWord"  Width="385" Margin="0" Text="{Binding KeyWord,Mode=TwoWay}" VerticalAlignment="Top"/>
-                <c4f:RoundButton  x:Name="btnSearch" Click="btnSearch_Click" ImageSource="/Images/appbar.search.png" VerticalAlignment="Top" Margin="0,10,0,0" HorizontalAlignment="Left"/>
-            </StackPanel>
-            <phone:LongListSelector Grid.Row="2"   x:Name="listSearchResult" ItemsSource="{Binding SearchSubjectList}"  Visibility="Collapsed"
-                                       Padding="0" Width="456" Background="Transparent" >
-                <phone:LongListSelector.ListFooter>
+
+            <localctl:ProgressLLS Grid.Row="2"   x:Name="listSearchResult" ItemsSource="{Binding SearchSubjectList}" Visibility="Collapsed" >
+                <localctl:ProgressLLS.ListFooter>
                     <Button Content="查看更多" x:Name="btnLoadMore"  Click="btnLoadMore_Click" Visibility="{Binding LoadMoreVisibility}"/>
-                </phone:LongListSelector.ListFooter>
-            </phone:LongListSelector>
+                </localctl:ProgressLLS.ListFooter>
+            </localctl:ProgressLLS>
         </Grid>
     </Grid>
 
     <!--Sample code showing usage of ApplicationBar-->
     <phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
+        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True" Mode="Minimized">
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="返回首页" x:Name="appbarMenuHome" Click="appbarMenuHome_Click"/>
             </shell:ApplicationBar.MenuItems>

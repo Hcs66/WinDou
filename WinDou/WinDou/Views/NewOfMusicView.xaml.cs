@@ -10,7 +10,8 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
-using Coding4Fun.Phone.Controls;
+using Coding4Fun.Toolkit.Controls;
+using DoubanSharp.Model;
 
 namespace WinDou.Views
 {
@@ -21,6 +22,10 @@ namespace WinDou.Views
             InitializeComponent();
             DataContext = base.SubjectViewModel = App.NewOfMusicViewModel;
             base.SubjectType = "2";
+            ProgressLLSList = new List<Controls.ProgressLLS>();
+            ProgressLLSList.Add(listChina);
+            ProgressLLSList.Add(listEastern);
+            ProgressLLSList.Add(listWestern);
         }
 
         protected void linkBtnViewSubject_Click(object sender, RoutedEventArgs e)

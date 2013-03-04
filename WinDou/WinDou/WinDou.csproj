@@ -19,12 +19,13 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>WinDou_$(Configuration)_$(Platform).xap</XapFilename>
+    <XapFilename>WinDou.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>WinDou.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <ExpressionBlendVersion>5.0.30924.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -93,6 +94,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ProgressLLS.cs" />
     <Compile Include="Controls\RateControl.xaml.cs">
       <DependentUpon>RateControl.xaml</DependentUpon>
     </Compile>
@@ -106,7 +108,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SampleData\SampleDataSource\SampleDataSource.xaml.cs">
+      <DependentUpon>SampleDataSource.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\DoubanSearchCompletedEventArgs.cs" />
+    <Compile Include="ViewModels\GroupViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\NewOfBooksViewModel.cs" />
     <Compile Include="ViewModels\NewOfMoviesViewModel.cs" />
@@ -116,7 +122,18 @@
     <Compile Include="ViewModels\SubjectReviewListViewModel.cs" />
     <Compile Include="ViewModels\SubjectReviewViewModel.cs" />
     <Compile Include="ViewModels\SubjectViewModel.cs" />
-    <Compile Include="Views\EntityEditingPage.cs" />
+    <Compile Include="ViewModels\INewOfSubjectViewModelBase.cs" />
+    <Compile Include="ViewModels\MyGroupViewModel.cs" />
+    <Compile Include="ViewModels\GroupTopicViewModel.cs" />
+    <Compile Include="Views\Group\MyGroupView.xaml.cs">
+      <DependentUpon>MyGroupView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\GroupTopicView.xaml.cs">
+      <DependentUpon>GroupTopicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Group\GroupView.xaml.cs">
+      <DependentUpon>GroupView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -130,9 +147,6 @@
       <DependentUpon>NewOfMusicView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\NewOfSubjectViewBase.cs" />
-    <Compile Include="Views\Subject\EditSubjectReview.xaml.cs">
-      <DependentUpon>EditSubjectReview.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\Subject\SearchSubject.xaml.cs">
       <DependentUpon>SearchSubject.xaml</DependentUpon>
     </Compile>
@@ -158,6 +172,21 @@
     <Page Include="ResourceDictionaries\Default.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <DesignTimeOnly Include="SampleData\SampleDataSource\SampleDataSource.xaml">
+      <Generator>MSBuild:MarkupCompilePass1</Generator>
+      <SubType>Designer</SubType>
+    </DesignTimeOnly>
+    <Page Include="Views\Group\MyGroupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Group\GroupTopicView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Group\GroupView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -168,9 +197,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\NewOfMusicView.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Subject\EditSubjectReview.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Subject\SearchSubject.xaml">
@@ -187,36 +213,21 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <Content Include="app.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="livetile-big.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
+    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml">
       <SubType>Designer</SubType>
     </None>
-    <None Include="WinDou_2012_11_20_23_02_32.sap" />
-    <None Include="WinDou_2012_11_20_23_18_18.sap" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ApplicationIcon.png" />
-    <Content Include="Assets\AlignmentGrid.png" />
-    <Content Include="Assets\ApplicationIcon.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileMedium.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\FlipCycleTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileMediumLarge.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Assets\Tiles\IconicTileSmall.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Images\about.png" />
     <Content Include="Images\appbar.add.png" />
     <Content Include="Images\appbar.check.png" />
@@ -229,16 +240,12 @@
     <Content Include="Images\back.png" />
     <Content Include="Images\book.png" />
     <Content Include="Images\find.png" />
-    <Content Include="Images\me.png" />
+    <Content Include="Images\group.png" />
     <Content Include="Images\movie.png" />
     <Content Include="Images\music.png" />
     <Content Include="Images\next.png" />
     <Content Include="Images\setting.png" />
-    <Content Include="README_FIRST.txt" />
-    <Content Include="Toolkit.Content\ApplicationBar.Cancel.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Check.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Delete.png" />
-    <Content Include="Toolkit.Content\ApplicationBar.Select.png" />
+    <Content Include="SplashScreenImage.jpg" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\AppResources.resx">
@@ -247,19 +254,19 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Coding4Fun.Phone.Controls">
-      <HintPath>..\packages\Coding4Fun.Phone.Controls.1.6.1\lib\sl4-windowsphone71\Coding4Fun.Phone.Controls.dll</HintPath>
+    <Reference Include="Coding4Fun.Toolkit.Controls, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Coding4Fun.Toolkit.Controls.2.0.0\lib\windowsphone8\Coding4Fun.Toolkit.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Configuration">
       <HintPath>Lib\Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="DoubanSharp">
+    <Reference Include="DoubanSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\DoubanSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Hammock.WindowsPhone">
-      <HintPath>Lib\Hammock.WindowsPhone.dll</HintPath>
-    </Reference>
-    <Reference Include="HapExtensions">
+    <Reference Include="HapExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\HapExtensions.dll</HintPath>
     </Reference>
     <Reference Include="HcsLib.WindowsPhone">
@@ -268,14 +275,13 @@
     <Reference Include="HtmlAgilityPack">
       <HintPath>Lib\HtmlAgilityPack.dll</HintPath>
     </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib.WindowsPhone">
-      <HintPath>Lib\ICSharpCode.SharpZipLib.WindowsPhone.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Phone.Controls.Toolkit">
+    <Reference Include="Microsoft.Phone.Controls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=24eec0d8c86cda1e, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.Phone.Controls.Toolkit, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b772ad94eb9ca604, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\WPtoolkit.4.2012.10.30\lib\wp8\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json.WindowsPhone">
-      <HintPath>Lib\Newtonsoft.Json.WindowsPhone.dll</HintPath>
+    <Reference Include="RestSharp.WindowsPhone">
+      <HintPath>Lib\RestSharp.WindowsPhone.dll</HintPath>
     </Reference>
     <Reference Include="System.ServiceModel.Syndication">
       <HintPath>Lib\System.ServiceModel.Syndication.dll</HintPath>
@@ -285,6 +291,9 @@
     <Folder Include="Extensions\" />
     <Folder Include="Misc\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <DesignTimeOnly Include="SampleData\SampleDataSource\SampleDataSource.xsd" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
