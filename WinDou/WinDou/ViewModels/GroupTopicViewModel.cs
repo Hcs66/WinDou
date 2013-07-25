@@ -41,6 +41,12 @@ namespace WinDou.ViewModels
                         GetGroupTopicCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = true });
                     }
                     break;
+                case "GroupTopicImageList":
+                    if (GetGroupTopicImageListCompleted != null)
+                    {
+                        GetGroupTopicImageListCompleted(this, new DoubanSearchCompletedEventArgs() { IsSuccess = true });
+                    }
+                    break;
                 default:
                     break;
             }
@@ -58,6 +64,9 @@ namespace WinDou.ViewModels
 
         public EventHandler<DoubanSearchCompletedEventArgs> GetGroupTopicReviewListCompleted { get; set; }
 
+        public ObservableCollection<DoubanGroupTopicImage> GroupTopicImageList { get; set; }
+
+        public EventHandler<DoubanSearchCompletedEventArgs> GetGroupTopicImageListCompleted { get; set; }
 
 
         /// <summary>
@@ -94,6 +103,15 @@ namespace WinDou.ViewModels
                                   TopicContentList.Add(CurrentTopic.Content.Substring(totalPages * m_MaxLengthPerPage));
                               }
                               this.OnPropertyChanged("CurrentTopic");
+                              this.GroupTopicImageList = new ObservableCollection<DoubanGroupTopicImage>();
+                              if (topic.Photos != null && topic.Photos.Count > 0)
+                              {
+                                  foreach (var image in topic.Photos)
+                                  {
+                                      this.GroupTopicImageList.Add(image);
+                                  }
+                              }
+                              this.OnPropertyChanged("GroupTopicImageList");
                           });
                       }
                   }

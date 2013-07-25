@@ -42,37 +42,43 @@ namespace WinDou.ViewModels
         protected override List<DoubanBook> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
         {
             List<DoubanBook> subjectList = new List<DoubanBook>();
-            foreach (var li in liList)
+            try
             {
-                HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
-                if (fictionNodes.Count == 0)
+                foreach (var li in liList)
                 {
-                    continue;
+                    HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
+                    if (fictionNodes.Count == 0)
+                    {
+                        continue;
+                    }
+                    //标题
+                    HtmlNode h2 = fictionNodes.FindFirst("h2");
+                    //作者和简介
+                    IEnumerable<HtmlNode> pArr = fictionNodes.Elements("p");
+                    int index = 0;
+                    string[] authorDescArr = new string[2];
+                    foreach (var p in pArr)
+                    {
+                        authorDescArr[index] = regexRemoveBlank.Replace(p.InnerText, "");
+                        index++;
+                    }
+                    //链接
+                    HtmlNode a = fictionNodes.FindFirst("a");
+                    //图片
+                    HtmlNode img = fictionNodes.FindFirst("img");
+                    subjectList.Add(new DoubanBook()
+                    {
+                        Id = regexSubjetId.Match(a.Attributes["href"].Value).Groups[1].Value,
+                        AuthorName = authorDescArr[0],
+                        Author = new List<string>() { authorDescArr[0] },
+                        Summary = authorDescArr[1],
+                        Title = regexRemoveBlank.Replace(h2.InnerText, ""),
+                        Image = img.Attributes["src"].Value
+                    });
                 }
-                //标题
-                HtmlNode h2 = fictionNodes.FindFirst("h2");
-                //作者和简介
-                IEnumerable<HtmlNode> pArr = fictionNodes.Elements("p");
-                int index = 0;
-                string[] authorDescArr = new string[2];
-                foreach (var p in pArr)
-                {
-                    authorDescArr[index] = regexRemoveBlank.Replace(p.InnerText, "");
-                    index++;
-                }
-                //链接
-                HtmlNode a = fictionNodes.FindFirst("a");
-                //图片
-                HtmlNode img = fictionNodes.FindFirst("img");
-                subjectList.Add(new DoubanBook()
-                {
-                    Id = regexSubjetId.Match(a.Attributes["href"].Value).Groups[1].Value,
-                    AuthorName = authorDescArr[0],
-                    Author = new List<string>() { authorDescArr[0] },
-                    Summary = authorDescArr[1],
-                    Title = regexRemoveBlank.Replace(h2.InnerText, ""),
-                    Image = img.Attributes["src"].Value
-                });
+            }
+            catch
+            {
             }
             return subjectList;
         }

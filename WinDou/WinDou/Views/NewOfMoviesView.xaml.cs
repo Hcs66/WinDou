@@ -23,11 +23,7 @@ namespace WinDou.Views
             DataContext=base.SubjectViewModel= App.NewOfMoviesViewModel;
             base.SubjectType = "1";
             ProgressLLSList = new List<Controls.ProgressLLS>();
-            ProgressLLSList.Add(listAction);
             ProgressLLSList.Add(listAll);
-            ProgressLLSList.Add(listComedy);
-            ProgressLLSList.Add(listPlot);
-            ProgressLLSList.Add(listSuspense);
         }
 
         protected void linkBtnViewSubject_Click(object sender, RoutedEventArgs e)

@@ -44,27 +44,6 @@
                 <localctl:ProgressLLS x:Name="listAll" ItemsSource="{Binding AllList}" 
                          ItemTemplate="{StaticResource SubjectListTemplate}" toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
             </phone:PivotItem>
-
-            <phone:PivotItem x:Name="pivotItemPlot" Header="剧情" Style="{StaticResource PivotIemtDefaultStyle}">
-                <localctl:ProgressLLS x:Name="listPlot" ItemsSource="{Binding PlotList}" ItemTemplate="{StaticResource SubjectListTemplate}"
-                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
-            </phone:PivotItem>
-
-            <phone:PivotItem x:Name="pivotItemAction" Header="动作" Style="{StaticResource PivotIemtDefaultStyle}">
-                <localctl:ProgressLLS x:Name="listAction" ItemsSource="{Binding ActionList}" ItemTemplate="{StaticResource SubjectListTemplate}"
-                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
-            </phone:PivotItem>
-
-
-            <phone:PivotItem x:Name="pivotItemComedy" Header="喜剧" Style="{StaticResource PivotIemtDefaultStyle}">
-                <localctl:ProgressLLS x:Name="listComedy" ItemsSource="{Binding ComedyList}" ItemTemplate="{StaticResource SubjectListTemplate}"
-                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
-            </phone:PivotItem>
-
-            <phone:PivotItem x:Name="pivotItemSuspense" Header="悬疑" Style="{StaticResource PivotIemtDefaultStyle}">
-                <localctl:ProgressLLS x:Name="listSuspense" ItemsSource="{Binding SuspenseList}" ItemTemplate="{StaticResource SubjectListTemplate}"
-                         toolkit:TurnstileFeatherEffect.FeatheringIndex="1"/>
-            </phone:PivotItem>
         </phone:Pivot>
     </Grid>
 

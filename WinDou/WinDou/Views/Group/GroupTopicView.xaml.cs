@@ -40,6 +40,9 @@ namespace WinDou.Views
                     ToggleListBoxBusyStyle(listGroupTopicReview, true);
                     App.GroupTopicViewModel.GetGroupTopicReviewListCompleted += new EventHandler<DoubanSearchCompletedEventArgs>(GetGroupTopicReviewListCompleted);
                     App.GroupTopicViewModel.GetGroupTopicReviews(tid);
+
+                    ToggleListBoxBusyStyle(listGroupTopicImage, true);
+                    App.GroupTopicViewModel.GetGroupTopicImageListCompleted += new EventHandler<DoubanSearchCompletedEventArgs>(GetGroupTopicImageListCompleted);  
                 }
             }
         }
@@ -54,6 +57,15 @@ namespace WinDou.Views
                     pivotItemGroupTopicReview.Header = "评论(" + int.Parse(e.Result.ToString()).ToString() + ")";
                 }
                 ToggleListBoxBusyStyle(listGroupTopicReview, false);
+            });
+        }
+
+        private void GetGroupTopicImageListCompleted(object sender, DoubanSearchCompletedEventArgs e)
+        {
+            App.GroupTopicViewModel.GetGroupTopicImageListCompleted -= GetGroupTopicImageListCompleted;
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                ToggleListBoxBusyStyle(listGroupTopicImage, false);
             });
         }
 

@@ -21,67 +21,53 @@ namespace WinDou.ViewModels
 
         public NewOfMoviesViewModel()
         {
-            this.SubjectListUrl = "http://movie.douban.com/";
+            this.SubjectListUrl = "http://movie.douban.com/chart";
         }
 
         protected override void BuildSubjectList(HtmlNode root)
         {
-            AllList = ParseSubjecList(root.SelectNodes("//ul[@id='hots-movie-all']//li"));
-            ActionList = ParseSubjecList(root.SelectNodes("//ul[@id='hots-movie-action']//li"));
-            PlotList = ParseSubjecList(root.SelectNodes("//ul[@id='hots-movie-drama']//li"));
-            ComedyList = ParseSubjecList(root.SelectNodes("//ul[@id='hots-movie-comedy']//li"));
-            SuspenseList = ParseSubjecList(root.SelectNodes("//ul[@id='hots-movie-mystery']//li"));
+            AllList = ParseSubjecList(root.SelectNodes("//div[@class='indent']//table"));
         }
 
         protected override List<DoubanMovie> ParseSubjecList(IEnumerable<HtmlAbstractor> itemList)
         {
             List<DoubanMovie> subjectList = new List<DoubanMovie>();
-            foreach (var item in itemList)
+            try
             {
-                HtmlNodeCollection movieNodes = (item as HtmlElementAbstractor).Element.ChildNodes;
-                if (movieNodes.Count == 0)
-                {
-                    continue;
-                }
-                //标题和链接
-                HtmlNode h3 = movieNodes.FindFirst("h3");
-                HtmlNode titleNode = h3.LastChild;
 
-                HtmlNode infoNode = movieNodes.SingleOrDefault(n => n.HasAttributes && n.Attributes.Contains("class")
-                    && n.Attributes["class"].Value == "hots-tab-info");
-                HtmlNodeCollection infoNodeChilds = infoNode.ChildNodes;
-                string meta = "";
-                string desc = "";
-                if (infoNodeChilds != null && infoNodeChilds.Count > 0)
-                {
-                    //评分信息
-                    var metaNode = infoNodeChilds.SingleOrDefault(n => n.HasAttributes && n.Attributes.Contains("class")
-                        && n.Attributes["class"].Value == "hots-meta");
-                    if (metaNode != null)
-                    {
-                        meta = metaNode.InnerText.Replace("\n", "").Replace(" ", "");
-                    }
-                    //描述信息
-                    var descNode = infoNodeChilds.SingleOrDefault(n => n.HasAttributes && n.Attributes.Contains("class")
-                        && n.Attributes["class"].Value == "hots-desc");
-                    if (descNode != null)
-                    {
-                        desc = descNode.InnerText.Replace("\n", "").Replace(" ", "");
-                    }
-                }
 
-                //图片
-                HtmlNode img = movieNodes.FindFirst("img");
-                subjectList.Add(new DoubanMovie()
+                foreach (var item in itemList)
                 {
-                    Id = regexSubjetId.Match(titleNode.Attributes["href"].Value).Groups[1].Value,
-                    AuthorName = "",
-                    Author = new List<DoubanAuthor>() { new DoubanAuthor() { Name = "" } },
-                    Summary = desc,
-                    Title = regexRemoveBlank.Replace(titleNode.InnerText, ""),
-                    Image = img.Attributes["src"].Value,
-                    AltTitle = meta
-                });
+                    HtmlNodeCollection movieNodes = (item as HtmlElementAbstractor).Element.ChildNodes;
+                    if (movieNodes.Count == 0)
+                    {
+                        continue;
+                    }
+                    //标题和链接
+                    HtmlNode titleNode = movieNodes.FindFirst("a");
+                    string title = titleNode.Attributes["title"].Value;
+                    //图片
+                    HtmlNode imgNode = titleNode.Element("img");
+
+                    HtmlNode infoNode = movieNodes.FindFirst("p");
+                    HtmlNodeCollection infoNodeChilds = infoNode.ChildNodes;
+                    //班底
+                    string meta = infoNode.InnerText;
+                    string desc = "";
+                    subjectList.Add(new DoubanMovie()
+                    {
+                        Id = regexSubjetId.Match(titleNode.Attributes["href"].Value).Groups[1].Value,
+                        AuthorName = "",
+                        Author = new List<DoubanAuthor>() { new DoubanAuthor() { Name = "" } },
+                        Summary = desc,
+                        Title = title,
+                        Image = imgNode.Attributes["src"].Value,
+                        AltTitle = meta
+                    });
+                }
+            }
+            catch
+            {
             }
             return subjectList;
         }

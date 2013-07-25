@@ -44,34 +44,40 @@ namespace WinDou.ViewModels
         protected override List<DoubanMusic> ParseSubjecList(IEnumerable<HtmlAbstractor> liList)
         {
             List<DoubanMusic> subjectList = new List<DoubanMusic>();
-            foreach (var li in liList)
+            try
             {
-                HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
-                if (fictionNodes.Count == 0)
+                foreach (var li in liList)
                 {
-                    continue;
+                    HtmlNodeCollection fictionNodes = (li as HtmlElementAbstractor).Element.ChildNodes;
+                    if (fictionNodes.Count == 0)
+                    {
+                        continue;
+                    }
+                    //标题和链接
+                    HtmlNode h3 = fictionNodes.FindFirst("h3");
+                    HtmlNode titleNode = h3.LastChild;
+                    //作者和简介
+                    HtmlNode authorNode = h3.NextSibling;
+                    string author = "";
+                    if (authorNode != null)
+                    {
+                        author = authorNode.InnerText.Replace("\n", "").Replace(" ", "");
+                    }
+                    //图片
+                    HtmlNode img = fictionNodes.FindFirst("img");
+                    subjectList.Add(new DoubanMusic()
+                    {
+                        Id = regexSubjetId.Match(titleNode.Attributes["href"].Value).Groups[1].Value,
+                        AuthorName = author,
+                        Author = new List<DoubanAuthor>() { new DoubanAuthor() { Name = author } },
+                        Summary = "",
+                        Title = regexRemoveBlank.Replace(titleNode.InnerText, ""),
+                        Image = img.Attributes["src"].Value
+                    });
                 }
-                //标题和链接
-                HtmlNode h3=fictionNodes.FindFirst("h3");
-                HtmlNode titleNode = h3.LastChild;
-                //作者和简介
-                HtmlNode authorNode = h3.NextSibling;
-                string author = "";
-                if (authorNode != null)
-                {
-                    author = authorNode.InnerText.Replace("\n", "").Replace(" ", "");
-                }
-                //图片
-                HtmlNode img = fictionNodes.FindFirst("img");
-                subjectList.Add(new DoubanMusic()
-                {
-                    Id = regexSubjetId.Match(titleNode.Attributes["href"].Value).Groups[1].Value,
-                    AuthorName = author,
-                    Author = new List<DoubanAuthor>() { new DoubanAuthor() { Name = author } },
-                    Summary = "",
-                    Title = regexRemoveBlank.Replace(titleNode.InnerText, ""),
-                    Image = img.Attributes["src"].Value
-                });
+            }
+            catch
+            {
             }
             return subjectList;
         }

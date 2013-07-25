@@ -29,6 +29,13 @@
                 <TextBlock Margin="68,0,0,0" Text="{Binding Text}"  TextWrapping="Wrap" Foreground="Black"  FontSize="{StaticResource PhoneFontSizeMedium}"/>
             </StackPanel>
         </DataTemplate>
+
+        <DataTemplate x:Key="GroupTopicImageListTemplate">
+            <StackPanel Margin="0,0,0,25">
+                <Image Source="{Binding Alt}" />
+                <TextBlock Text="{Binding Title}" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </DataTemplate>
     </views:WinDouAppPage.Resources>
 
     <!--LayoutRoot 是包含所有页面内容的根网格-->
@@ -70,6 +77,11 @@
                     <localctl:ProgressLLS.ListFooter>
                         <Button Content="查看更多" x:Name="btnLoadMore" Click="btnLoadMore_Click" Visibility="{Binding LoadMoreVisibility}"/>
                     </localctl:ProgressLLS.ListFooter>
+                </localctl:ProgressLLS>
+            </phone:PivotItem>
+            <phone:PivotItem x:Name="pivotItemGroupTopicImage" Header="图片" Style="{StaticResource PivotIemtDefaultStyle}">
+                <localctl:ProgressLLS x:Name="listGroupTopicImage" ItemsSource="{Binding GroupTopicImageList}"   
+                                          ItemTemplate="{StaticResource GroupTopicImageListTemplate}">
                 </localctl:ProgressLLS>
             </phone:PivotItem>
         </phone:Pivot>
